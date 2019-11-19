@@ -11,14 +11,12 @@
 
 namespace Dmytrof\ModelsManagementBundle\Manager;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\{EntityManagerInterface, Mapping\ClassMetadata};
 use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\{
-    Form\FormFactoryInterface,
-    OptionsResolver\OptionsResolver,
-    Validator\Validator\ValidatorInterface};
+use Symfony\Component\{Form\FormFactoryInterface, Validator\Validator\ValidatorInterface};
+use Symfony\Component\OptionsResolver\{Options, OptionsResolver};
 use Dmytrof\ModelsManagementBundle\Model\{DoctrinePaginator, SimpleModelInterface};
+use Dmytrof\ModelsManagementBundle\{Repository\EntityRepositoryInterface, Utils\OptionsFilter};
 
 abstract class AbstractDoctrineManager extends AbstractManager
 {
@@ -28,7 +26,7 @@ abstract class AbstractDoctrineManager extends AbstractManager
     protected $registry;
 
     /**
-     * AbstractDoctrinePaginationManager constructor.
+     * AbstractDoctrineManager constructor.
      * @param RegistryInterface $registry
      * @param ValidatorInterface $validator
      * @param FormFactoryInterface $formFactory
@@ -165,7 +163,7 @@ abstract class AbstractDoctrineManager extends AbstractManager
     }
 
     /**
-     * Disables EM filter
+     * Disables doctrine filter
      * @param string $name
      * @return bool
      */
@@ -176,7 +174,7 @@ abstract class AbstractDoctrineManager extends AbstractManager
     }
 
     /**
-     * Enables EM filter
+     * Enables doctrine filter
      * @param string $name
      * @return bool
      */
@@ -188,21 +186,50 @@ abstract class AbstractDoctrineManager extends AbstractManager
 
     /**
      * Returns entities iterator
-     * @param int $page
-     * @param int $onPage
-     * @param array $filter
-     * @param array $sorting
-     * @param array $settings
+     * @param array $options
      * @return \Iterator
      */
-    public function getIterator(int $page = 1, int $onPage = 10, array $filter = [], array $sorting = [], array $settings = []): \Iterator
+    public function getIterator(array $options = []): \Iterator
     {
-        $query = $this->getRepository()->getPaginationQueryBuilder($filter, $sorting, $settings)
-            ->setFirstResult(($page-1) * $onPage)
-            ->setMaxResults($onPage)
+        $options = $this->configureGetIteratorOptions(new OptionsResolver())->resolve($options);
+
+        $query = $this->getRepository()->getQueryBuilder((new OptionsFilter())->removeUndefinedOptions($options, $this->getRepository()->configureGetQueryBuilderOptions(new OptionsResolver())))
+            ->setFirstResult(($options['page']-1) * $options['limit'])
+            ->setMaxResults($options['limit'])
             ->getQuery()
         ;
         return $query->iterate();
+    }
+
+    /**
+     * Configures paginator options
+     * @param OptionsResolver $resolver
+     * @return OptionsResolver
+     */
+    public function configureGetIteratorOptions(OptionsResolver $resolver): OptionsResolver
+    {
+        $resolver->setDefaults([
+            'filter' => [],
+            'sorting' => [],
+            'page' => 1,
+            'limit' => 50,
+        ]);
+
+        $resolver
+            ->setAllowedTypes('filter', ['array'])
+            ->setAllowedTypes('sorting', ['array'])
+        ;
+
+        $resolver
+            ->setNormalizer('page', function (Options $options, $page) {
+                return $page > 0 ? (int) $page : 1;
+            })
+            ->setNormalizer('limit', function (Options $options, $limit) {
+                return $limit > 0 ? (int) $limit : 50;
+            })
+        ;
+
+        return $resolver;
     }
 
     /**
@@ -219,7 +246,7 @@ abstract class AbstractDoctrineManager extends AbstractManager
      * @param array $options
      * @return DoctrinePaginator
      */
-    public function getDoctrinePaginator(array $options): DoctrinePaginator
+    public function getDoctrinePaginator(array $options = []): DoctrinePaginator
     {
         return $this->getRepository()->getPaginator($options);
     }
