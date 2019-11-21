@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Dmytrof\ModelsManagementBundle\Entity\Traits;
+namespace Dmytrof\ModelsManagementBundle\Repository\Traits;
 
 use Dmytrof\ModelsManagementBundle\Model\{DoctrinePaginator, SimpleModelInterface};
 use Dmytrof\ModelsManagementBundle\{Repository\EntityRepositoryInterface, Utils\OptionsFilter};
