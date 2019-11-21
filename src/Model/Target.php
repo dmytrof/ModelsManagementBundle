@@ -94,6 +94,7 @@ class Target
             throw new TargetException(sprintf('Class name of the target is already defined'));
         }
         $this->className = $className;
+
         return $this;
     }
 
@@ -117,6 +118,7 @@ class Target
             throw new TargetException(sprintf('ID of the target is already defined'));
         }
         $this->id = $id;
+
         return $this;
     }
 
@@ -145,9 +147,9 @@ class Target
     /**
      * Returns model of target
      * @param ManagerRegistry|null $registry
-     * @return SimpleModelInterface
+     * @return SimpleModelInterface|null
      */
-    public function getModel(ManagerRegistry $registry = null): SimpleModelInterface
+    public function getModel(ManagerRegistry $registry = null): ?SimpleModelInterface
     {
         if (is_null($this->model) && $this->getClassName()) {
             $repo = $this->getTargetRepository($registry ?: $this->getRegistry());
@@ -160,6 +162,7 @@ class Target
                 $this->model = new $className();
             }
         }
+
         return $this->model;
     }
 
@@ -170,8 +173,16 @@ class Target
      */
     public function getTargetRepository(ManagerRegistry $registry = null): ObjectRepository
     {
-        $registry = $registry ?: $this->getRegistry();
-        return $registry->getRepository($this->getClassName());
+        $repository = null;
+        if ($this->getClassName()) {
+            $registry = $registry ?: $this->getRegistry();
+            $repository = $registry->getRepository($this->getClassName());
+        }
+        if (!$repository) {
+            throw new TargetException(sprintf('Undefined className'));
+        }
+
+        return $repository;
     }
 
     /**
@@ -182,6 +193,7 @@ class Target
     {
         $this->setIdFromModel($this->getModel());
         $this->setClassNameFromModel($this->getModel());
+
         return $this;
     }
 
@@ -207,6 +219,7 @@ class Target
             ->setClassName(isset($data['className']) ? $data['className'] : null)
             ->setId(isset($data['id']) ? $data['id'] : null)
         ;
+
         return $this;
     }
 }

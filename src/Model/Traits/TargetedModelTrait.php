@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Dmytrof\ModelsManagementBundle\Model\{SimpleModelInterface, TargetedModelInterface, Target};
 use Dmytrof\ModelsManagementBundle\Exception\InvalidTargetException;
 
-trait TargetedModel
+trait TargetedModelTrait
 {
     /**
      * @var ManagerRegistry
