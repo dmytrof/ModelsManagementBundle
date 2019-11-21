@@ -14,7 +14,6 @@
         "php": "^7.2",
         "symfony/framework-bundle": "^4.3",
         "doctrine/orm": "^2.6",
-        "symfony/doctrine-bridge": "^4.3",
         "symfony/validator": "^4.3",
         "symfony/form": "^4.3"
     },

@@ -12,7 +12,7 @@
 namespace Dmytrof\ModelsManagementBundle\Manager;
 
 use Doctrine\ORM\{EntityManagerInterface, Mapping\ClassMetadata};
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\{Form\FormFactoryInterface, Validator\Validator\ValidatorInterface};
 use Symfony\Component\OptionsResolver\{Options, OptionsResolver};
 use Dmytrof\ModelsManagementBundle\Model\{DoctrinePaginator, SimpleModelInterface};
@@ -21,17 +21,17 @@ use Dmytrof\ModelsManagementBundle\{Repository\EntityRepositoryInterface, Utils\
 abstract class AbstractDoctrineManager extends AbstractManager
 {
     /**
-     * @var RegistryInterface
+     * @var ManagerRegistry
      */
     protected $registry;
 
     /**
      * AbstractDoctrineManager constructor.
-     * @param RegistryInterface $registry
+     * @param ManagerRegistry $registry
      * @param ValidatorInterface $validator
      * @param FormFactoryInterface $formFactory
      */
-    public function __construct(RegistryInterface $registry, ValidatorInterface $validator, FormFactoryInterface $formFactory)
+    public function __construct(ManagerRegistry $registry, ValidatorInterface $validator, FormFactoryInterface $formFactory)
     {
         parent::__construct($validator, $formFactory);
         $this->registry = $registry;
@@ -39,9 +39,9 @@ abstract class AbstractDoctrineManager extends AbstractManager
 
     /**
      * Returns Registry
-     * @return RegistryInterface
+     * @return ManagerRegistry
      */
-    public function getRegistry(): RegistryInterface
+    public function getRegistry(): ManagerRegistry
     {
         return $this->registry;
     }
