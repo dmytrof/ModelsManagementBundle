@@ -34,7 +34,7 @@ interface TargetedModelInterface
      * @param Target|SimpleModelInterface $target
      * @return TargetedModelInterface
      */
-    public function setTarget($target): self;
+    public function setTarget($target): TargetedModelInterface;
 
     /**
      * Returns target
@@ -53,5 +53,5 @@ interface TargetedModelInterface
      * Refreshes target
      * @return TargetedModelInterface
      */
-    public function refreshTarget(): self;
+    public function refreshTarget(): TargetedModelInterface;
 }

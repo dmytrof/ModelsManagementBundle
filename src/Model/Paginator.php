@@ -33,7 +33,7 @@ class Paginator implements PaginatorInterface
     /**
      * @var int
      */
-    protected $totalCount = 0;
+    protected $totalCount;
 
     /**
      * Paginator constructor.
@@ -42,12 +42,12 @@ class Paginator implements PaginatorInterface
      * @param int|null $limit
      * @param int|null $totalCount
      */
-    public function __construct(iterable $items, ?int $page = 1, ?int $limit = null, ?int $totalCount = null)
+    public function __construct(iterable $items, ?int $page = null, ?int $limit = null, ?int $totalCount = null)
     {
         $this->items = [];
         array_push($this->items, ...$items);
         $itemsCount = count($this->items);
-        $this->page = $page;
+        $this->page = $page ?: 1;
         $this->limit = $limit ?: $itemsCount;
         $this->totalCount = $totalCount ?: $itemsCount;
     }

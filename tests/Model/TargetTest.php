@@ -20,11 +20,6 @@ use PHPUnit\Framework\TestCase;
 class TargetTest extends TestCase
 {
     /**
-     * @var Target
-     */
-    protected $target;
-
-    /**
      * Creates target
      * @return Target
      */
@@ -32,11 +27,6 @@ class TargetTest extends TestCase
     {
         $registry = $this->createMock(ManagerRegistry::class);
         return new Target($registry, ...func_get_args());
-    }
-
-    public function setUp(): void
-    {
-        $this->target = $this->createTarget();
     }
 
     public function testEmptyTargetCreation(): void
