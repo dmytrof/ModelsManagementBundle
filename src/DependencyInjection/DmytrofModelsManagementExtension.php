@@ -30,6 +30,6 @@ class DmytrofModelsManagementExtension extends Extension
         $loader->load('services.yml');
 
         $container->registerForAutoconfiguration(ManagerInterface::class)
-            ->addTag('model.manager');
+            ->addTag('dmytrof.model.manager');
     }
 }

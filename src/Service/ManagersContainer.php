@@ -38,7 +38,7 @@ class ManagersContainer implements \IteratorAggregate
      */
     public function getIterator()
     {
-        return new \ArrayIterator($this->managers->toArray());
+        return $this->managers->getIterator();
     }
 
     /**

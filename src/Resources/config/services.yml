@@ -17,4 +17,4 @@ services:
     Dmytrof\ModelsManagementBundle\Service\ManagersContainer:
         public: true
         arguments:
-            $managers: !tagged 'model.manager'
+            $managers: !tagged 'dmytrof.model.manager'
