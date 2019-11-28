@@ -11,7 +11,7 @@
 
 namespace Dmytrof\ModelsManagementBundle\Model;
 
-interface ActivatedModelInterface
+interface ActiveModelInterface
 {
     /**
      * Return the name of active property
@@ -22,13 +22,13 @@ interface ActivatedModelInterface
     /**
      * Sets model active
      * @param bool $active
-     * @return ActivatedModelInterface
+     * @return ActiveModelInterface
      */
     public function setActive(bool $active = true): self;
 
     /**
      * Toggles model active
-     * @return ActivatedModelInterface
+     * @return ActiveModelInterface
      */
     public function toggleActive(): self;
 
@@ -46,13 +46,13 @@ interface ActivatedModelInterface
 
     /**
      * Activates model
-     * @return ActivatedModelInterface
+     * @return ActiveModelInterface
      */
-    public function activate(): ActivatedModelInterface;
+    public function activate(): ActiveModelInterface;
 
     /**
      * Deactivates model
-     * @return ActivatedModelInterface
+     * @return ActiveModelInterface
      */
-    public function deactivate(): ActivatedModelInterface;
+    public function deactivate(): ActiveModelInterface;
 }

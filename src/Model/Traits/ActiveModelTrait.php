@@ -11,9 +11,9 @@
 
 namespace Dmytrof\ModelsManagementBundle\Model\Traits;
 
-use Dmytrof\ModelsManagementBundle\Model\ActivatedModelInterface;
+use Dmytrof\ModelsManagementBundle\Model\ActiveModelInterface;
 
-trait ActivatedModelTrait
+trait ActiveModelTrait
 {
     /**
      * @var boolean
@@ -32,9 +32,9 @@ trait ActivatedModelTrait
     /**
      * Sets model active
      * @param bool $active
-     * @return ActivatedModelInterface
+     * @return ActiveModelInterface
      */
-    public function setActive(bool $active = true): ActivatedModelInterface
+    public function setActive(bool $active = true): ActiveModelInterface
     {
         $this->{static::getActiveProperty()} = $active;
         return $this;
@@ -42,9 +42,9 @@ trait ActivatedModelTrait
 
     /**
      * Toggles model active
-     * @return ActivatedModelInterface
+     * @return ActiveModelInterface
      */
-    public function toggleActive(): ActivatedModelInterface
+    public function toggleActive(): ActiveModelInterface
     {
         $this->{static::getActiveProperty()} = !$this->{static::getActiveProperty()};
         return $this;
@@ -70,18 +70,18 @@ trait ActivatedModelTrait
 
     /**
      * Activates model
-     * @return ActivatedModelInterface
+     * @return ActiveModelInterface
      */
-    public function activate(): ActivatedModelInterface
+    public function activate(): ActiveModelInterface
     {
         return $this->setActive(true);
     }
 
     /**
      * Deactivates model
-     * @return ActivatedModelInterface
+     * @return ActiveModelInterface
      */
-    public function deactivate(): ActivatedModelInterface
+    public function deactivate(): ActiveModelInterface
     {
         return $this->setActive(false);
     }
