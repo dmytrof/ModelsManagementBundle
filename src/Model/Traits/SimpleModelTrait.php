@@ -47,4 +47,22 @@ trait SimpleModelTrait
     {
         return is_null($this->getId());
     }
+
+    /**
+     * Returns title of the model
+     * @return string
+     */
+    public function getTitleOfModel(): string
+    {
+        return 'ID: '.$this->getId();
+    }
+
+    public function __toString()
+    {
+        try {
+            return $this->isNew() ? 'NEW' : $this->getTitleOfModel();
+        } catch (\Exception $e) {
+            return 'N\A';
+        }
+    }
 }

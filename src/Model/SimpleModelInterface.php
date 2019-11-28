@@ -14,7 +14,7 @@ namespace Dmytrof\ModelsManagementBundle\Model;
 interface SimpleModelInterface
 {
     /**
-     * Returns id
+     * Returns model id
      * @return mixed
      */
     public function getId();
@@ -24,4 +24,10 @@ interface SimpleModelInterface
      * @return bool
      */
     public function isNew(): bool;
+
+    /**
+     * Returns title of the model
+     * @return string
+     */
+    public function getTitleOfModel(): string;
 }
