@@ -18,3 +18,15 @@ services:
         public: true
         arguments:
             $managers: !tagged 'dmytrof.model.manager'
+
+    Gedmo\Timestampable\TimestampableListener:
+        tags:
+            - { name: doctrine.event_subscriber }
+        calls:
+            - [ setAnnotationReader, [ "@annotation_reader" ] ]
+
+    Gedmo\Blameable\BlameableListener:
+        tags:
+            - { name: doctrine.event_subscriber }
+        calls:
+            - [ setAnnotationReader, [ "@annotation_reader" ] ]
