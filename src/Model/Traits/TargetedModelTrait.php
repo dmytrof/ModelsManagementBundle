@@ -63,7 +63,7 @@ trait TargetedModelTrait
     public function setTarget($target): TargetedModelInterface
     {
         $target = ($target instanceof Target) ? $target : new Target($this->getRegistry(), $target);
-        $this->updateTargetJson($target);
+        $this->updateTargetData($target);
         $this->targetObj = $target;
         return $this;
     }
@@ -75,14 +75,14 @@ trait TargetedModelTrait
     public function refreshTarget(): TargetedModelInterface
     {
         $this->getTarget()->refresh();
-        $this->updateTargetJson($this->getTarget());
+        $this->updateTargetData($this->getTarget());
         return $this;
     }
 
     /**
      * @param Target $target
      */
-    private function updateTargetJson(Target $target): void
+    private function updateTargetData(Target $target): void
     {
         $this->target = $target->toArray();
     }
