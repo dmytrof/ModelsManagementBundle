@@ -12,6 +12,7 @@
 namespace Dmytrof\ModelsManagementBundle\Model\Traits;
 
 use Dmytrof\ModelsManagementBundle\Model\ArrayConvertibleModelInterface;
+use Doctrine\Common\Inflector\Inflector;
 
 trait ArrayConvertibleModelTrait
 {
@@ -21,7 +22,18 @@ trait ArrayConvertibleModelTrait
      */
     public function toArray(): array
     {
-        return get_object_vars($this);
+        $array = [];
+        foreach (get_object_vars($this) as $name => $value) {
+            if (is_scalar($value) || is_array($value)) {
+                $array[$name] = $value;
+            } elseif ($value instanceof \StdClass) {
+                $array[$name] = (array) $value;
+            } elseif ($value instanceof ArrayConvertibleModelInterface) {
+                $array[$name] = $value->toArray();
+            }
+        }
+
+        return $array;
     }
 
     /**
@@ -32,10 +44,14 @@ trait ArrayConvertibleModelTrait
     public function fromArray(array $data): ArrayConvertibleModelInterface
     {
         foreach ($data as $key => $value) {
-            if (property_exists($this, $key)) {
+            $method = 'fromArraySet'.Inflector::classify($key);
+            if (method_exists($this, $method)) {
+                $this->$method($value);
+            } else if (property_exists($this, $key)) {
                 $this->$key = $value;
             }
         }
+
         return $this;
     }
 }
