@@ -23,13 +23,16 @@ trait ArrayConvertibleModelTrait
     public function toArray(): array
     {
         $array = [];
-        foreach (get_object_vars($this) as $name => $value) {
-            if (is_scalar($value) || is_array($value)) {
-                $array[$name] = $value;
+        foreach (get_object_vars($this) as $property => $value) {
+            $method = 'toArray'.Inflector::classify($property);
+            if (method_exists($this, $method)) {
+                $array[$property] = $this->$method($value);
+            } else if (is_scalar($value) || is_array($value)) {
+                $array[$property] = $value;
             } elseif ($value instanceof \StdClass) {
-                $array[$name] = (array) $value;
+                $array[$property] = (array) $value;
             } elseif ($value instanceof ArrayConvertibleModelInterface) {
-                $array[$name] = $value->toArray();
+                $array[$property] = $value->toArray();
             }
         }
 
@@ -44,7 +47,7 @@ trait ArrayConvertibleModelTrait
     public function fromArray(array $data): ArrayConvertibleModelInterface
     {
         foreach ($data as $key => $value) {
-            $method = 'fromArraySet'.Inflector::classify($key);
+            $method = 'fromArray'.Inflector::classify($key);
             if (method_exists($this, $method)) {
                 $this->$method($value);
             } else if (property_exists($this, $key)) {
