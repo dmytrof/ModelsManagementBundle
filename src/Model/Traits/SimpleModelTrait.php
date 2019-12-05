@@ -15,7 +15,14 @@ use Dmytrof\ModelsManagementBundle\Model\SimpleModelInterface;
 
 trait SimpleModelTrait
 {
-    protected $id;
+    /**
+     * Returns id field name
+     * @return string
+     */
+    protected function getIdFieldName(): string
+    {
+        return 'id';
+    }
 
     /**
      * Returns id
@@ -24,7 +31,7 @@ trait SimpleModelTrait
      */
     public function getId()
     {
-        return $this->id;
+        return $this->{$this->getIdFieldName()};
     }
 
     /**
@@ -34,7 +41,7 @@ trait SimpleModelTrait
      */
     public function setId($id): SimpleModelInterface
     {
-        $this->id = $id;
+        $this->{$this->getIdFieldName()} = $id;
         return $this;
     }
 
