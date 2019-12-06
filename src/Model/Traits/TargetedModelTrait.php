@@ -129,6 +129,7 @@ trait TargetedModelTrait
      */
     protected function _destructTargetedModel()
     {
+        $this->registry = null;
         $this->target = null;
         $this->targetObj = null;
     }

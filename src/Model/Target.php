@@ -115,7 +115,7 @@ class Target
     public function setId($id): self
     {
         if (!is_null($this->getId())) {
-            throw new TargetException(sprintf('ID of the target is already defined'));
+            throw new TargetException(sprintf('ID of the target is already defined to %s', $this->getId()));
         }
         $this->id = $id;
 
@@ -140,7 +140,7 @@ class Target
      */
     protected function setIdFromModel(?SimpleModelInterface $model): self
     {
-        $this->id = $model ? $model->getId() : 0;
+        $this->id = $model ? $model->getId() : null;
         return $this;
     }
 

@@ -11,6 +11,7 @@
 
 namespace Dmytrof\ModelsManagementBundle\EventListener;
 
+use Doctrine\ORM\Events;
 use Dmytrof\ModelsManagementBundle\Model\{TargetedModelInterface, Target};
 use Doctrine\Common\{EventSubscriber, Persistence\Event\LifecycleEventArgs, Persistence\ManagerRegistry};
 
@@ -38,11 +39,11 @@ class ModelDoctrineSubscriber implements EventSubscriber
     public function getSubscribedEvents()
     {
         return [
-            'postLoad',
-            'prePersist',
-            'postPersist',
-            'preUpdate',
-            'postUpdate',
+            Events::postLoad,
+            Events::prePersist,
+            Events::postPersist,
+            Events::preUpdate,
+            Events::postUpdate,
         ];
     }
 
@@ -65,9 +66,13 @@ class ModelDoctrineSubscriber implements EventSubscriber
     {
         $entity = $args->getObject();
         if ($entity instanceof TargetedModelInterface && $entity->getTarget()->getClassName()) {
-            if (!$entity->getTarget()->getId() && $entity->getTarget()->getModel()->getId()) {
-                $entity->refreshTarget();
-                $args->getObjectManager()->flush();
+            if (!$entity->getTarget()->getId() && $entity->getTarget()->getModel()) {
+                if (!$entity->getTarget()->getModel()->getId()) {
+                    $args->getObjectManager()->getEventManager()->addEventListener(Events::postPersist, new NewTargetDoctrineListener($entity));
+                } else {
+                    $entity->refreshTarget();
+                    $args->getObjectManager()->flush();
+                }
             }
         }
     }
