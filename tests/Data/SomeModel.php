@@ -16,4 +16,6 @@ use Dmytrof\ModelsManagementBundle\Model\{SimpleModelInterface, Traits\SimpleMod
 class SomeModel implements SimpleModelInterface
 {
     use SimpleModelTrait;
+
+    protected $id;
 }
