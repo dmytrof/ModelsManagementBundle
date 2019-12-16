@@ -16,8 +16,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\OptionsResolver\{Options, OptionsResolver};
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Dmytrof\ModelsManagementBundle\Utils\OptionsFilter;
-use Dmytrof\ModelsManagementBundle\Exception\{ManagerException, FormErrorsException, NotFoundException, ModelValidationException};
-use Dmytrof\ModelsManagementBundle\Model\{SimpleModelInterface, ModelWithRemovalConditionInterface};
+use Dmytrof\ModelsManagementBundle\Exception\{ManagerException,
+    FormErrorsException,
+    ModelException,
+    NotFoundException,
+    ModelValidationException,
+    NotRemovableModelException};
+use Dmytrof\ModelsManagementBundle\Model\{SimpleModelInterface, ConditionalRemovalInterface};
 
 abstract class AbstractManager implements ManagerInterface
 {
@@ -157,9 +162,10 @@ abstract class AbstractManager implements ManagerInterface
     public function remove(SimpleModelInterface $model, array $options = []): ManagerInterface
     {
         $options = $this->configureRemoveOptions(new OptionsResolver())->resolve($options);
-        if (!$model instanceof ModelWithRemovalConditionInterface || $model->canBeRemoved()) {
-            $this->_remove($model, $options);
+        if ($model instanceof ConditionalRemovalInterface && !$model->canBeRemoved()) {
+            throw new NotRemovableModelException($model);
         }
+        $this->_remove($model, $options);
 
         return $this;
     }

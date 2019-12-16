@@ -11,7 +11,7 @@
 
 namespace Dmytrof\ModelsManagementBundle\Model;
 
-interface ModelWithRemovalConditionInterface
+interface ConditionalRemovalInterface
 {
     /**
      * Checks if model can be removed

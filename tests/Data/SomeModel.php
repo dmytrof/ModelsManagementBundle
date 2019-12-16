@@ -11,11 +11,44 @@
 
 namespace Dmytrof\ModelsManagementBundle\Tests\Data;
 
-use Dmytrof\ModelsManagementBundle\Model\{SimpleModelInterface, Traits\SimpleModelTrait};
+use Dmytrof\ModelsManagementBundle\Model\{ConditionalRemovalInterface, SimpleModelInterface, Traits\SimpleModelTrait};
 
-class SomeModel implements SimpleModelInterface
+class SomeModel implements SimpleModelInterface, ConditionalRemovalInterface
 {
     use SimpleModelTrait;
 
     protected $id;
+
+    /**
+     * @var string
+     */
+    protected $foo;
+
+    /**
+     * Returns foo
+     * @return string|null
+     */
+    public function getFoo(): ?string
+    {
+        return $this->foo;
+    }
+
+    /**
+     * Sets foo
+     * @param string|null $foo
+     * @return SomeModel
+     */
+    public function setFoo(?string $foo): self
+    {
+        $this->foo = $foo;
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function canBeRemoved(): bool
+    {
+        return (bool) $this->getId();
+    }
 }

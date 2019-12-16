@@ -52,7 +52,16 @@ abstract class AbstractDoctrineManager extends AbstractManager
      */
     public function getManager(): EntityManagerInterface
     {
-        return $this->getRegistry()->getEntityManager();
+        return $this->getRegistry()->getManager();
+    }
+
+    /**
+     * Returns repository for entity
+     * @return EntityRepositoryInterface
+     */
+    public function getRepository(): EntityRepositoryInterface
+    {
+        return $this->getRegistry()->getRepository($this->getModelClass());
     }
 
     /**
@@ -98,7 +107,7 @@ abstract class AbstractDoctrineManager extends AbstractManager
             }
 
         } catch (\Throwable $exception) {
-            if (!$this->getRegistry()->getEntityManager()->isOpen()) {
+            if (!$this->getManager()->isOpen()) {
                 $this->getRegistry()->resetManager();
             }
 
@@ -151,15 +160,6 @@ abstract class AbstractDoctrineManager extends AbstractManager
     public function new(): SimpleModelInterface
     {
         return $this->getRepository()->createNew(...func_get_args());
-    }
-
-    /**
-     * Returns repository for entity
-     * @return EntityRepositoryInterface
-     */
-    public function getRepository(): EntityRepositoryInterface
-    {
-        return $this->getManager()->getRepository($this->getModelClass());
     }
 
     /**
