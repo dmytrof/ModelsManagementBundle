@@ -25,6 +25,7 @@ class SomeModelType extends AbstractType
         $resolver->setDefaults([
             'data_class' => SomeModel::class,
             'csrf_protection' => false,
+            'allow_extra_fields' => false,
         ]);
     }
 

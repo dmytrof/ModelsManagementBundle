@@ -11,6 +11,7 @@
 
 namespace Dmytrof\ModelsManagementBundle\Manager;
 
+use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationRequestHandler;
 use Symfony\Component\Form\{FormError, FormFactoryInterface, FormInterface};
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\OptionsResolver\{Options, OptionsResolver};
@@ -18,7 +19,6 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Dmytrof\ModelsManagementBundle\Utils\OptionsFilter;
 use Dmytrof\ModelsManagementBundle\Exception\{ManagerException,
     FormErrorsException,
-    ModelException,
     NotFoundException,
     ModelValidationException,
     NotRemovableModelException};
@@ -412,12 +412,15 @@ abstract class AbstractManager implements ManagerInterface
     protected function configureProcessModelFormOptions(OptionsResolver $resolver): OptionsResolver
     {
         $resolver->setDefaults([
-            'request'       => null,
+            'formName'      => null,
             'data'          => [],
             'directSubmit'  => false,
             'directSubmitClearMissing' => false,
+            'request'       => null,
             'requestMethod' => Request::METHOD_POST,
         ]);
+
+        $resolver->setRequired('formName');
 
         $resolver->setAllowedValues('requestMethod', [Request::METHOD_POST, Request::METHOD_PUT, Request::METHOD_PATCH]);
 
@@ -428,7 +431,7 @@ abstract class AbstractManager implements ManagerInterface
 
         $resolver->setNormalizer('request', function (Options $options, $request) {
             if (!$request && !$options['directSubmit']) {
-                $request = new Request([], ['data' => $options['data']]);
+                $request = new Request([], $options['formName'] ? [$options['formName'] => $options['data']] : $options['data']);
                 $request->setMethod($options['requestMethod']);
             }
             return $request;
@@ -445,12 +448,16 @@ abstract class AbstractManager implements ManagerInterface
      */
     public function processModelForm(FormInterface $form, array $options = []): self
     {
-        $options = $this->configureProcessModelFormOptions(new OptionsResolver())->resolve($options);
+        $options = $this->configureProcessModelFormOptions(new OptionsResolver())->resolve($options + ['formName' => $form->getName()]);
+
         if ($options['directSubmit']) {
             $form->submit($options['data'], $options['directSubmitClearMissing']);
-        } else {
+        } else if ($form->getConfig()->getRequestHandler() instanceof HttpFoundationRequestHandler || is_null($options['request'])) {
             $form->handleRequest($options['request']);
+        } else {
+            throw new ManagerException(sprintf('Unable to handle "request" option because request handler is not %s. Use "directSubmit" and "data" options instead.', HttpFoundationRequestHandler::class));
         }
+
         return $this;
     }
 
@@ -468,6 +475,7 @@ abstract class AbstractManager implements ManagerInterface
         if (!$form->isValid()) {
             throw new FormErrorsException($form);
         }
+
         return $this;
     }
 }

@@ -16,7 +16,7 @@ use Dmytrof\ModelsManagementBundle\Manager\AbstractDoctrineManager;
 use Dmytrof\ModelsManagementBundle\Model\SimpleModelInterface;
 use Doctrine\Common\{EventManager, Persistence\ManagerRegistry};
 use Doctrine\ORM\{EntityManagerInterface, Mapping\ClassMetadata};
-use Dmytrof\ModelsManagementBundle\Tests\Data\{SomeModel, SomeModelManager, SomeModelRepository};
+use Dmytrof\ModelsManagementBundle\Tests\Data\{SomeModel, SomeModelDoctrineManager, SomeModelRepository};
 use Symfony\Component\Form\{FormFactoryBuilder, FormFactoryInterface};
 use Symfony\Component\Validator\{ConstraintViolation,
     ConstraintViolationList,
@@ -61,7 +61,7 @@ class AbstractDoctrineManagerTest extends TestCase
         });
         $formFactory = (new FormFactoryBuilder())->getFormFactory();
 
-        $this->manager = new SomeModelManager($registry, $validator, $formFactory);
+        $this->manager = new SomeModelDoctrineManager($registry, $validator, $formFactory);
     }
 
     public function testEntityManager(): void
