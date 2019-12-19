@@ -51,23 +51,36 @@ class FormErrorsException extends RuntimeException implements HttpExceptionInter
     public function getFormErrors(): array
     {
         $errors = [];
-        $getPropertyPath = function(FormError $error) {
+        $getPropertyPath = function(FormError $error, FormInterface $form) {
             $path = $error->getCause() ? $error->getCause()->getPropertyPath() : null;
-            if (substr($path, 0, 1) == '[') { // Validated by form
-                $path = $error->getOrigin()->getPropertyPath().'.'.trim(str_replace('].children[', '.', $path), '[]');
+            if (is_null($path) && $error->getOrigin()->getPropertyPath()) {
+                $pathParts = [];
+                $form = $error->getOrigin();
+                while ($form->getParent()) {
+                    array_unshift($pathParts, $form->getPropertyPath());
+                    $form = $form->getParent();
+                }
+                $path = join('.', $pathParts);
+            }
+            $path = preg_replace('/children\[([^\]]+)\]/', '${1}', $path);
+            $path = preg_replace('/\[(\d+)\]/', '.${1}', $path);
+            if (substr($path, 0, 5) == 'data.') {
+                $path = substr($path, 5);
+            }
+            if (substr($path, -5) == '.data') {
+                $path = substr($path, 0,-5);
             }
             return $path;
         };
-        foreach ($this->getForm()->getErrors(true, true ) as $error) {
-            $_errors = &$errors;
-            foreach (explode('.', $getPropertyPath->call($this, $error)) as $pathPart) {
-                if (!isset($_errors[$pathPart])) {
-                    $_errors[$pathPart] = [];
-                }
-                $_errors = &$_errors[$pathPart];
+        $form = $this->getForm();
+        foreach ($form->getErrors(true, true) as $error) {
+            $path = $getPropertyPath->call($this, $error, $form);
+            if (!isset($errors[$path])) {
+                $errors[$path] = [];
             }
-            $_errors[] = $error->getMessage();
+            array_push($errors[$path], $error->getMessage());
         }
+
         return $errors;
     }
 
