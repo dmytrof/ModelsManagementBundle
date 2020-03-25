@@ -24,7 +24,10 @@ class NotDeletableModelException extends RuntimeException implements HttpExcepti
     /**
      * @var array
      */
-    protected $headers = ['X-Conditional-Deletion-Error' => true];
+    protected $headers = [
+        'Access-Control-Expose-Headers' => 'X-Conditional-Deletion-Error',
+        'X-Conditional-Deletion-Error' => true,
+    ];
 
     /**
      * NotDeletableModelException constructor.
