@@ -11,11 +11,12 @@
 
 namespace Dmytrof\ModelsManagementBundle\Tests\Manager;
 
-use Dmytrof\ModelsManagementBundle\Exception\{ModelValidationException, NotFoundException, NotRemovableModelException};
+use Dmytrof\ModelsManagementBundle\EventListener\ModelDoctrineSubscriber;
+use Dmytrof\ModelsManagementBundle\Exception\{ModelValidationException, NotFoundException, NotDeletableModelException};
 use Dmytrof\ModelsManagementBundle\Manager\AbstractDoctrineManager;
 use Dmytrof\ModelsManagementBundle\Model\SimpleModelInterface;
 use Doctrine\Common\{EventManager, Persistence\ManagerRegistry};
-use Doctrine\ORM\{EntityManagerInterface, Mapping\ClassMetadata};
+use Doctrine\ORM\{EntityManagerInterface, Event\LifecycleEventArgs, Mapping\ClassMetadata};
 use Dmytrof\ModelsManagementBundle\Tests\Data\{SomeModel, SomeModelDoctrineManager, SomeModelRepository};
 use Symfony\Component\Form\{FormFactoryBuilder, FormFactoryInterface};
 use Symfony\Component\Validator\{ConstraintViolation,
@@ -34,6 +35,8 @@ class AbstractDoctrineManagerTest extends TestCase
     {
         parent::setUp();
 
+        $registry = $this->createMock(ManagerRegistry::class);
+
         $eventManager = $this->createMock(EventManager::class);
         $eventManager->method('dispatchEvent')->willReturn(true);
 
@@ -43,6 +46,10 @@ class AbstractDoctrineManagerTest extends TestCase
         $entityManager->method('flush');
         $entityManager->method('find')->willReturnCallback(function ($className, $id, $lockMode, $lockVersion) {
             return ($id == 1) ? (new SomeModel())->setId(1) : null;
+        });
+        $entityManager->method('remove')->willReturnCallback(function (SimpleModelInterface $model) use ($registry, $entityManager) {
+            $subscriber = new ModelDoctrineSubscriber($registry);
+            $subscriber->preRemove(new LifecycleEventArgs($model, $entityManager));
         });
 
         $repo = new SomeModelRepository($entityManager, new ClassMetadata(SomeModel::class));
@@ -112,19 +119,19 @@ class AbstractDoctrineManagerTest extends TestCase
 
         $this->assertSame($this->manager, $this->manager->save($item));
 
+        $this->assertSame($this->manager, $this->manager->save((clone $item)->setFoo('qwe'), ['validate' => true, 'flush' => true]));
+
         $this->expectException(ModelValidationException::class);
         $this->manager->save($item, ['validate' => true]);
-
-        $this->assertSame($this->manager, $this->manager->save($item->setFoo('qwe'), ['validate' => true, 'flush' => true]));
     }
 
     public function testRemove(): void
     {
         $item = new SomeModel();
 
-        $this->expectException(NotRemovableModelException::class);
-        $this->assertSame($this->manager, $this->manager->remove($item));
+        $this->assertSame($this->manager, $this->manager->remove((clone $item)->setId(2), ['flush' => true]));
 
-        $this->assertSame($this->manager, $this->manager->remove($item->setId(1), ['flush' => true]));
+        $this->expectException(NotDeletableModelException::class);
+        $this->assertSame($this->manager, $this->manager->remove($item));
     }
 }

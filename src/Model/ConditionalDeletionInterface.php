@@ -11,11 +11,14 @@
 
 namespace Dmytrof\ModelsManagementBundle\Model;
 
-interface ConditionalRemovalInterface
+use Dmytrof\ModelsManagementBundle\Exception\NotDeletableModelException;
+
+interface ConditionalDeletionInterface
 {
     /**
-     * Checks if model can be removed
+     * Checks if model can be deleted
      * @return bool
+     * @throws NotDeletableModelException
      */
-    public function canBeRemoved(): bool;
+    public function canBeDeleted(): bool;
 }

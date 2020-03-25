@@ -21,8 +21,8 @@ use Dmytrof\ModelsManagementBundle\Exception\{ManagerException,
     FormErrorsException,
     NotFoundException,
     ModelValidationException,
-    NotRemovableModelException};
-use Dmytrof\ModelsManagementBundle\Model\{SimpleModelInterface, ConditionalRemovalInterface};
+    NotDeletableModelException};
+use Dmytrof\ModelsManagementBundle\Model\{SimpleModelInterface, ConditionalDeletionInterface};
 
 abstract class AbstractManager implements ManagerInterface
 {
@@ -162,12 +162,26 @@ abstract class AbstractManager implements ManagerInterface
     public function remove(SimpleModelInterface $model, array $options = []): ManagerInterface
     {
         $options = $this->configureRemoveOptions(new OptionsResolver())->resolve($options);
-        if ($model instanceof ConditionalRemovalInterface && !$model->canBeRemoved()) {
-            throw new NotRemovableModelException($model);
+        if (!$this->canModelBeDeleted($model)) {
+            throw new NotDeletableModelException();
         }
         $this->_remove($model, $options);
 
         return $this;
+    }
+
+    /**
+     * Checks if model can be deleted
+     * @param SimpleModelInterface $model
+     * @return bool
+     */
+    protected function canModelBeDeleted(SimpleModelInterface $model): bool
+    {
+        if ($model instanceof ConditionalDeletionInterface && !$model->canBeDeleted()) {
+            throw new NotDeletableModelException();
+        }
+
+        return true;
     }
 
     /**

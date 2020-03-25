@@ -11,23 +11,36 @@
 
 namespace Dmytrof\ModelsManagementBundle\Exception;
 
-use Dmytrof\ModelsManagementBundle\Model\ConditionalRemovalInterface;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
 
-class NotRemovableModelException extends RuntimeException implements HttpExceptionInterface
+class NotDeletableModelException extends RuntimeException implements HttpExceptionInterface
 {
     /**
-     * NotRemovableModelException constructor.
-     * @param ConditionalRemovalInterface $entity
+     * @var int
+     */
+    protected $statusCode;
+
+    /**
+     * @var array
+     */
+    protected $headers = ['X-Conditional-Deletion-Error' => true];
+
+    /**
+     * NotDeletableModelException constructor.
      * @param null $message
+     * @param null $statusCode
+     * @param array $headers
      * @param int $code
      * @param Throwable|null $previous
      */
-    public function __construct(ConditionalRemovalInterface $entity, $message = null, $code = 0, Throwable $previous = null)
+    public function __construct($message = null, $statusCode = null, array $headers = [], $code = 0, Throwable $previous = null)
     {
-        $message = $message ?? 'Deletion prohibited';
+        $message = 'Deletion prohibited'. ($message ? ': '.$message : '');
         parent::__construct($message, $code, $previous);
+
+        $this->statusCode = $statusCode ?? 403;
+        $this->headers = array_merge($this->headers, $headers);
     }
 
     /**
@@ -35,7 +48,7 @@ class NotRemovableModelException extends RuntimeException implements HttpExcepti
      */
     public function getStatusCode()
     {
-        return 403;
+        return $this->statusCode;
     }
 
     /**
@@ -43,6 +56,6 @@ class NotRemovableModelException extends RuntimeException implements HttpExcepti
      */
     public function getHeaders()
     {
-        return [];
+        return $this->headers;
     }
 }

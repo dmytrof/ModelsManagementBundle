@@ -134,6 +134,17 @@ abstract class AbstractDoctrineManager extends AbstractManager
     }
 
     /**
+     * Checks if model can be deleted
+     * @param SimpleModelInterface $model
+     * @return bool
+     */
+    protected function canModelBeDeleted(SimpleModelInterface $model): bool
+    {
+        // Deletion check is on preRemove doctrine event
+        return true;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function _remove(SimpleModelInterface $model, array $options = []): ManagerInterface

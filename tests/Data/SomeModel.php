@@ -11,9 +11,11 @@
 
 namespace Dmytrof\ModelsManagementBundle\Tests\Data;
 
-use Dmytrof\ModelsManagementBundle\Model\{ConditionalRemovalInterface, SimpleModelInterface, Traits\SimpleModelTrait};
+use Dmytrof\ModelsManagementBundle\Model\{ConditionalDeletionInterface, SimpleModelInterface, Traits\SimpleModelTrait};
+use Dmytrof\ModelsManagementBundle\Exception\NotDeletableModelException;
+use Doctrine\Common\Persistence\ObjectManager;
 
-class SomeModel implements SimpleModelInterface, ConditionalRemovalInterface
+class SomeModel implements SimpleModelInterface, ConditionalDeletionInterface
 {
     use SimpleModelTrait;
 
@@ -47,8 +49,11 @@ class SomeModel implements SimpleModelInterface, ConditionalRemovalInterface
     /**
      * @inheritDoc
      */
-    public function canBeRemoved(): bool
+    public function canBeDeleted(): bool
     {
+        if (!$this->getId()) {
+            throw new NotDeletableModelException('Not deletable');
+        }
         return (bool) $this->getId();
     }
 }

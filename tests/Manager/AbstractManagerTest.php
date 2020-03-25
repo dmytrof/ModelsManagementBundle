@@ -12,15 +12,13 @@
 namespace Dmytrof\ModelsManagementBundle\Tests\Manager;
 
 use Dmytrof\ModelsManagementBundle\Manager\AbstractManager;
-use Dmytrof\ModelsManagementBundle\Exception\{FormErrorsException,
-    ManagerException,
+use Dmytrof\ModelsManagementBundle\Exception\{ManagerException,
     ModelValidationException,
     NotFoundException,
-    NotRemovableModelException};
+    NotDeletableModelException};
 use Dmytrof\ModelsManagementBundle\Model\SimpleModelInterface;
 use Dmytrof\ModelsManagementBundle\Tests\Data\{SomeModel, SomeModelManager};
 use Symfony\Component\Form\{Extension\HttpFoundation\HttpFoundationExtension,
-    FormError,
     FormFactoryBuilder,
     FormFactoryInterface,
     FormInterface};
@@ -95,20 +93,20 @@ class AbstractManagerTest extends TestCase
 
         $this->assertSame($this->manager, $this->manager->save($item));
 
+        $this->assertSame($this->manager, $this->manager->save((clone $item)->setFoo('qwe'), ['validate' => true]));
+
         $this->expectException(ModelValidationException::class);
         $this->manager->save($item, ['validate' => true]);
-
-        $this->assertSame($this->manager, $this->manager->save($item->setFoo('qwe'), ['validate' => true]));
     }
 
     public function testRemove(): void
     {
         $item = new SomeModel();
 
-        $this->expectException(NotRemovableModelException::class);
-        $this->assertSame($this->manager, $this->manager->remove($item));
+        $this->assertSame($this->manager, $this->manager->remove((clone $item)->setId(1)));
 
-        $this->assertSame($this->manager, $this->manager->remove($item->setId(1)));
+        $this->expectException(NotDeletableModelException::class);
+        $this->assertSame($this->manager, $this->manager->remove($item));
     }
 
     public function testRemoveById(): void
@@ -155,11 +153,6 @@ class AbstractManagerTest extends TestCase
         $this->assertSame($model, $form->getData());
     }
 
-//    public function testUpdateModelData(): void
-//    {
-//
-//    }
-
     public function testProcessModelForm()
     {
         $form = $this->manager->getCreateModelForm();
@@ -178,7 +171,10 @@ class AbstractManagerTest extends TestCase
                 'foo' => 'bar',
             ],
         ]));
+    }
 
+    public function testProcessModelForm2()
+    {
         $model = new SomeModel();
         $form = (new FormFactoryBuilder())->addExtension(new HttpFoundationExtension())->getFormFactory()->create($this->manager->getCreateModelFormType(), $model);
         $this->assertSame($this->manager, $this->manager->processModelForm($form, [

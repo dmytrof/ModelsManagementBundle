@@ -11,8 +11,9 @@
 
 namespace Dmytrof\ModelsManagementBundle\EventListener;
 
+use Dmytrof\ModelsManagementBundle\Exception\NotDeletableModelException;
 use Doctrine\ORM\Events;
-use Dmytrof\ModelsManagementBundle\Model\{TargetedModelInterface, Target};
+use Dmytrof\ModelsManagementBundle\Model\{ConditionalDeletionInterface, TargetedModelInterface, Target};
 use Doctrine\Common\{EventSubscriber, Persistence\Event\LifecycleEventArgs, Persistence\ManagerRegistry};
 
 class ModelDoctrineSubscriber implements EventSubscriber
@@ -44,6 +45,7 @@ class ModelDoctrineSubscriber implements EventSubscriber
             Events::postPersist,
             Events::preUpdate,
             Events::postUpdate,
+            Events::preRemove,
         ];
     }
 
@@ -120,5 +122,17 @@ class ModelDoctrineSubscriber implements EventSubscriber
     public function postUpdate(LifecycleEventArgs $args)
     {
         $this->updateTarget($args);
+    }
+
+    /**
+     * @param LifecycleEventArgs $args
+     * @return void
+     */
+    public function preRemove(LifecycleEventArgs $args)
+    {
+        $entity = $args->getObject();
+        if ($entity instanceof ConditionalDeletionInterface && !$entity->canBeDeleted()) {
+            throw new NotDeletableModelException();
+        }
     }
 }
