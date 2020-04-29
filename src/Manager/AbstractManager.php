@@ -443,12 +443,18 @@ abstract class AbstractManager implements ManagerInterface
         $resolver->setAllowedTypes('directSubmit',              'bool');
         $resolver->setAllowedTypes('directSubmitClearMissing',  'bool');
 
-        $resolver->setNormalizer('request', function (Options $options, $request) {
-            if (!$request && !$options['directSubmit']) {
-                $request = new Request([], $options['formName'] ? [$options['formName'] => $options['data']] : $options['data']);
-                $request->setMethod($options['requestMethod']);
+//        $resolver->setNormalizer('request', function (Options $options, $request) {
+//            if (!$request && !$options['directSubmit']) {
+//                $request = new Request([], $options['formName'] ? [$options['formName'] => $options['data']] : $options['data']);
+//                $request->setMethod($options['requestMethod']);
+//            }
+//            return $request;
+//        });
+        $resolver->setNormalizer('directSubmit', function (Options $options, $directSubmit) {
+            if (!$directSubmit && $options['data']) {
+                return true;
             }
-            return $request;
+            return $directSubmit;
         });
 
         return $resolver;
