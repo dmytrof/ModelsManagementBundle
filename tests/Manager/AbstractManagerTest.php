@@ -165,12 +165,13 @@ class AbstractManagerTest extends TestCase
         ]));
         $this->assertEquals('bar', $form->getData()->getFoo());
 
-        $this->expectException(ManagerException::class);
+        $form = $this->manager->getCreateModelForm();
         $this->assertSame($this->manager, $this->manager->processModelForm($form, [
             'data' => [
-                'foo' => 'bar',
+                'foo' => 'baz',
             ],
         ]));
+        $this->assertEquals('baz', $form->getData()->getFoo());
     }
 
     public function testProcessModelForm2()
