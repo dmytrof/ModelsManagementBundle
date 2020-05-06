@@ -46,28 +46,53 @@ trait SimpleModelTrait
     }
 
     /**
-     * Checks if model is new
-     * @see SimpleModelInterface::isNew()
-     * @return bool
+     * @deprecated Use isModelNew instead
      */
     public function isNew(): bool
     {
+        return $this->isModelNew();
+    }
+
+    /**
+     * Checks if model is new
+     * @see SimpleModelInterface::isModelNew()
+     * @return bool
+     */
+    public function isModelNew(): bool
+    {
         return is_null($this->getId());
+    }
+
+    /**
+     * @deprecated Use getModelTitle instead
+     */
+    public function getTitleOfModel(): string
+    {
+        return $this->getModelTitle();
     }
 
     /**
      * Returns title of the model
      * @return string
      */
-    public function getTitleOfModel(): string
+    public function getModelTitle(): string
     {
         return 'ID: '.$this->getId();
+    }
+
+    /**
+     * Returns code of the model
+     * @return string
+     */
+    public function getModelCode(): string
+    {
+        return substr(strrchr(static::class, '\\'), 1);
     }
 
     public function __toString()
     {
         try {
-            return $this->isNew() ? 'NEW' : $this->getTitleOfModel();
+            return $this->isModelNew() ? 'NEW '.$this->getModelCode() : $this->getModelTitle();
         } catch (\Exception $e) {
             return 'N\A';
         }

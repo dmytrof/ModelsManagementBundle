@@ -23,11 +23,17 @@ interface SimpleModelInterface
      * Checks if model is new
      * @return bool
      */
-    public function isNew(): bool;
+    public function isModelNew(): bool;
 
     /**
      * Returns title of the model
      * @return string
      */
-    public function getTitleOfModel(): string;
+    public function getModelTitle(): string;
+
+    /**
+     * Returns code of the model
+     * @return string
+     */
+    public function getModelCode(): string;
 }

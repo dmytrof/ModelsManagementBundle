@@ -13,7 +13,6 @@ namespace Dmytrof\ModelsManagementBundle\Tests\Data;
 
 use Dmytrof\ModelsManagementBundle\Model\{ConditionalDeletionInterface, SimpleModelInterface, Traits\SimpleModelTrait};
 use Dmytrof\ModelsManagementBundle\Exception\NotDeletableModelException;
-use Doctrine\Common\Persistence\ObjectManager;
 
 class SomeModel implements SimpleModelInterface, ConditionalDeletionInterface
 {
