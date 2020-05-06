@@ -46,14 +46,6 @@ trait SimpleModelTrait
     }
 
     /**
-     * @deprecated Use isModelNew instead
-     */
-    public function isNew(): bool
-    {
-        return $this->isModelNew();
-    }
-
-    /**
      * Checks if model is new
      * @see SimpleModelInterface::isModelNew()
      * @return bool
@@ -61,14 +53,6 @@ trait SimpleModelTrait
     public function isModelNew(): bool
     {
         return is_null($this->getId());
-    }
-
-    /**
-     * @deprecated Use getModelTitle instead
-     */
-    public function getTitleOfModel(): string
-    {
-        return $this->getModelTitle();
     }
 
     /**
