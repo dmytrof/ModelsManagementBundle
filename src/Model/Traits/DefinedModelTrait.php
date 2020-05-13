@@ -19,7 +19,7 @@ trait DefinedModelTrait
      * Returns code of the class
      * @return string
      */
-    public function getClassCode(): string
+    public static function getClassCode(): string
     {
         return substr(strrchr(static::class, '\\'), 1);
     }
@@ -28,8 +28,8 @@ trait DefinedModelTrait
      * Returns code of the model
      * @return string
      */
-    public function getClassName(): string
+    public static function getClassName(): string
     {
-        return ucwords(str_replace('_', ' ', Inflector::tableize($this->getClassCode())));
+        return ucwords(str_replace('_', ' ', Inflector::tableize(static::getClassCode())));
     }
 }

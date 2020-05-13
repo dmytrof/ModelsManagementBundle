@@ -17,11 +17,11 @@ interface DefinedModelInterface
      * Returns code of the class
      * @return string
      */
-    public function getClassCode(): string;
+    public static function getClassCode(): string;
 
     /**
      * Returns name of the class
      * @return string
      */
-    public function getClassName(): string;
+    public static function getClassName(): string;
 }
