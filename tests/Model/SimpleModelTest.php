@@ -25,7 +25,8 @@ class SimpleModelTest extends TestCase
         $this->assertTrue($model->isModelNew());
         $this->assertFalse(!$model->isModelNew());
         $this->assertNull($model->getId());
-        $this->assertEquals('SomeModel', $model->getModelCode());
+        $this->assertEquals('SomeModel', $model->getClassCode());
+        $this->assertEquals('Some Model', $model->getClassName());
         $this->assertEquals('ID: ', $model->getModelTitle());
         $this->assertEquals('NEW SomeModel', (string) $model);
     }
@@ -38,7 +39,8 @@ class SimpleModelTest extends TestCase
         $this->assertFalse($model->isModelNew());
         $this->assertTrue(!$model->isModelNew());
         $this->assertSame(25, $model->getId());
-        $this->assertEquals('SomeModel', $model->getModelCode());
+        $this->assertEquals('SomeModel', $model->getClassCode());
+        $this->assertEquals('Some Model', $model->getClassName());
         $this->assertEquals('ID: 25', $model->getModelTitle());
         $this->assertEquals('ID: 25', (string) $model);
     }

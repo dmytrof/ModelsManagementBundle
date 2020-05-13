@@ -11,23 +11,17 @@
 
 namespace Dmytrof\ModelsManagementBundle\Model;
 
-interface SimpleModelInterface extends DefinedModelInterface
+interface DefinedModelInterface
 {
     /**
-     * Returns model id
-     * @return mixed
-     */
-    public function getId();
-
-    /**
-     * Checks if model is new
-     * @return bool
-     */
-    public function isModelNew(): bool;
-
-    /**
-     * Returns title of the model object
+     * Returns code of the class
      * @return string
      */
-    public function getModelTitle(): string;
+    public function getClassCode(): string;
+
+    /**
+     * Returns name of the class
+     * @return string
+     */
+    public function getClassName(): string;
 }

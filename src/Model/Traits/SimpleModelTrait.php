@@ -15,6 +15,8 @@ use Dmytrof\ModelsManagementBundle\Model\SimpleModelInterface;
 
 trait SimpleModelTrait
 {
+    use DefinedModelTrait;
+
     /**
      * Returns id field name
      * @return string
@@ -64,19 +66,10 @@ trait SimpleModelTrait
         return 'ID: '.$this->getId();
     }
 
-    /**
-     * Returns code of the model
-     * @return string
-     */
-    public function getModelCode(): string
-    {
-        return substr(strrchr(static::class, '\\'), 1);
-    }
-
     public function __toString()
     {
         try {
-            return $this->isModelNew() ? 'NEW '.$this->getModelCode() : $this->getModelTitle();
+            return $this->isModelNew() ? 'NEW '.$this->getClassCode() : $this->getModelTitle();
         } catch (\Exception $e) {
             return 'N\A';
         }
