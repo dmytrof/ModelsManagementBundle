@@ -75,6 +75,26 @@ trait EntityRepositoryTrait
     }
 
     /**
+     * Applies filter to query builder
+     * @param QueryBuilder $builder
+     * @param array $filters
+     */
+    public function applyFilter(QueryBuilder $builder, array $filters = []): void
+    {
+
+    }
+
+    /**
+     * Applies sorting to query builder
+     * @param QueryBuilder $builder
+     * @param array $sorting
+     */
+    public function applySorting(QueryBuilder $builder, array $sorting = []): void
+    {
+
+    }
+
+    /**
      * Configures options for getQueryBuilder
      * @see EntityRepositoryInterface::configureGetQueryBuilderOptions()
      * @param OptionsResolver $resolver
@@ -84,12 +104,12 @@ trait EntityRepositoryTrait
     {
         $resolver->setDefaults([
             'alias' => $this->getAlias(),
-            'filters' => [],
+            'filter' => [],
             'sorting' => [],
         ]);
         $resolver
             ->setAllowedTypes('alias', ['string'])
-            ->setAllowedTypes('filters', ['array'])
+            ->setAllowedTypes('filter', ['array'])
             ->setAllowedTypes('sorting', ['array'])
         ;
 
@@ -108,6 +128,9 @@ trait EntityRepositoryTrait
 
         /** @var QueryBuilder $builder */
         $builder = $this->createQueryBuilder($options['alias']);
+
+        $this->applySorting($builder, $options['sorting']);
+        $this->applyFilter($builder, $options['filter']);
 
         return $builder;
     }
