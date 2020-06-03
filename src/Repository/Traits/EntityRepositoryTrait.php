@@ -129,8 +129,8 @@ trait EntityRepositoryTrait
         /** @var QueryBuilder $builder */
         $builder = $this->createQueryBuilder($options['alias']);
 
-        $this->applySorting($builder, $options['sorting']);
         $this->applyFilter($builder, $options['filter']);
+        $this->applySorting($builder, $options['sorting']);
 
         return $builder;
     }
