@@ -149,12 +149,14 @@ trait EntityRepositoryTrait
             'page' => 1,
             'limit' => 50,
             'fetchJoinCollection' => true,
+            'queryBuilderCallback' => null,
         ]);
 
         $resolver
-            ->setAllowedTypes('filter', ['array'])
-            ->setAllowedTypes('sorting', ['array'])
-            ->setAllowedTypes('fetchJoinCollection', ['bool'])
+            ->setAllowedTypes('filter', 'array')
+            ->setAllowedTypes('sorting', 'array')
+            ->setAllowedTypes('fetchJoinCollection', 'bool')
+            ->setAllowedTypes('queryBuilderCallback', ['null', \Closure::class])
         ;
 
         $resolver
@@ -179,7 +181,12 @@ trait EntityRepositoryTrait
     {
         $options = $this->configureGetPaginatorOptions(new OptionsResolver())->resolve($options);
 
-        return (new DoctrinePaginator($this->getQueryBuilder((new OptionsFilter())->removeUndefinedOptions($options, $this->configureGetQueryBuilderOptions(new OptionsResolver()))), $options['fetchJoinCollection']))
+        $queryBuilder = $this->getQueryBuilder((new OptionsFilter())->removeUndefinedOptions($options, $this->configureGetQueryBuilderOptions(new OptionsResolver())));
+        if ($options['queryBuilderCallback']) {
+            $options['queryBuilderCallback']->call($this, $queryBuilder);
+        }
+
+        return (new DoctrinePaginator($queryBuilder, $options['fetchJoinCollection']))
             ->setPage($options['page'])
             ->setLimit($options['limit'])
         ;
