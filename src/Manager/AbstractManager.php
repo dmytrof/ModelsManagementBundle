@@ -91,7 +91,11 @@ abstract class AbstractManager implements ManagerInterface
         $entity = !is_null($id) ? $this->get($id) : null;
         if (!$entity) {
             $class = static::EXCEPTION_CLASS_NOT_FOUND;
-            throw new $class();
+            $modelClassName = 'Model';
+            if (is_subclass_of($this->getModelClass(), SimpleModelInterface::class)) {
+                $modelClassName = call_user_func([$this->getModelClass(), 'getClassName']);
+            }
+            throw new $class(sprintf('%s not found', $modelClassName));
         }
 
         return $entity;
