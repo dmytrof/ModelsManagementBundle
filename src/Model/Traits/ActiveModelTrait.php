@@ -31,12 +31,12 @@ trait ActiveModelTrait
 
     /**
      * Sets model active
-     * @param bool $active
+     * @param bool|null $active
      * @return ActiveModelInterface
      */
-    public function setActive(bool $active = true): ActiveModelInterface
+    public function setActive(?bool $active = true): ActiveModelInterface
     {
-        $this->{static::getActiveProperty()} = $active;
+        $this->{static::getActiveProperty()} = (bool) $active;
         return $this;
     }
 
@@ -56,7 +56,7 @@ trait ActiveModelTrait
      */
     public function getActive(): bool
     {
-        return $this->{static::getActiveProperty()};
+        return (bool) $this->{static::getActiveProperty()};
     }
 
     /**
