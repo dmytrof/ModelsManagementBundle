@@ -11,7 +11,6 @@
 
 namespace Dmytrof\ModelsManagementBundle\Model\Traits;
 
-use Symfony\Component\Validator\Constraints as Assert;
 use Dmytrof\ModelsManagementBundle\Model\{SimpleModelInterface, TargetedModelInterface, Target};
 use Dmytrof\ModelsManagementBundle\Exception\InvalidTargetException;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -24,9 +23,7 @@ trait TargetedModelTrait
     protected $eventDispatcher;
 
     /**
-     * @var string
-     *
-     * @Assert\Valid
+     * @var array
      */
     protected $target;
 

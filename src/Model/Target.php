@@ -204,8 +204,8 @@ class Target
     public function fromArray(array $data): self
     {
         $this
-            ->setClassName(isset($data['className']) ? $data['className'] : null)
-            ->setId(isset($data['id']) ? $data['id'] : null)
+            ->setClassName($data['className'] ?? null)
+            ->setId($data['id'] ?? null)
         ;
 
         return $this;
