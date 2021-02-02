@@ -11,16 +11,16 @@
 
 namespace Dmytrof\ModelsManagementBundle\Model;
 
-use Doctrine\Common\Persistence\{ObjectRepository, ManagerRegistry};
 use Symfony\Component\Validator\Constraints as Assert;
-use Dmytrof\ModelsManagementBundle\{Exception\TargetException, Model\SimpleModelInterface, Repository\EntityRepositoryInterface};
+use Dmytrof\ModelsManagementBundle\{Event\LoadTargetModel, Exception\InvalidTargetException, Exception\TargetException};
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class Target
 {
     /**
-     * @var ManagerRegistry
+     * @var EventDispatcherInterface
      */
-    protected $registry;
+    protected $eventDispatcher;
 
     /**
      * @var string
@@ -43,35 +43,34 @@ class Target
 
     /**
      * Target constructor.
-     * @param ManagerRegistry $registry
-     * @param SimpleModelInterface|null $target
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param SimpleModelInterface|null $model
      */
-    public function __construct(ManagerRegistry $registry, SimpleModelInterface $target = null)
+    public function __construct(EventDispatcherInterface $eventDispatcher, ?SimpleModelInterface $model = null)
     {
-        $this->setRegistry($registry);
-        $this->setClassNameFromModel($target);
-        $this->setIdFromModel($target);
-        $this->model = $target;
+        $this->setEventDispatcher($eventDispatcher);
+        $this->model = $model;
+        $this->refresh();
     }
 
     /**
-     * Sets doctrine
-     * @param ManagerRegistry $registry
+     * Returns event dispatcher
+     * @return EventDispatcherInterface
+     */
+    public function getEventDispatcher(): EventDispatcherInterface
+    {
+        return $this->eventDispatcher;
+    }
+
+    /**
+     * Sets event dispatcher
+     * @param EventDispatcherInterface $eventDispatcher
      * @return $this
      */
-    public function setRegistry(ManagerRegistry $registry): self
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): self
     {
-        $this->registry = $registry;
+        $this->eventDispatcher = $eventDispatcher;
         return $this;
-    }
-
-    /**
-     * Returns registry
-     * @return null|ManagerRegistry
-     */
-    public function getRegistry(): ?ManagerRegistry
-    {
-        return $this->registry;
     }
 
     /**
@@ -88,9 +87,9 @@ class Target
      * @param null|string $className
      * @return Target
      */
-    public function setClassName(?string $className): self
+    protected function setClassName(?string $className): self
     {
-        if (!is_null($this->getClassName())) {
+        if (!is_null($this->getClassName()) && $this->getClassName() !== $className) {
             throw new TargetException(sprintf('Class name of the target is already defined'));
         }
         $this->className = $className;
@@ -112,9 +111,9 @@ class Target
      * @param mixed $id
      * @return Target
      */
-    public function setId($id): self
+    protected function setId($id): self
     {
-        if (!is_null($this->getId())) {
+        if (!is_null($this->getId()) && $this->getId() !== $id) {
             throw new TargetException(sprintf('ID of the target is already defined to %s', $this->getId()));
         }
         $this->id = $id;
@@ -129,7 +128,7 @@ class Target
      */
     protected function setClassNameFromModel(?SimpleModelInterface $model): self
     {
-        $this->className = $model ? get_class($model) : null;
+        $this->setClassName($model ? get_class($model) : null);
         return $this;
     }
 
@@ -140,49 +139,8 @@ class Target
      */
     protected function setIdFromModel(?SimpleModelInterface $model): self
     {
-        $this->id = $model ? $model->getId() : null;
+        $this->setId($model ? $model->getId() : null);
         return $this;
-    }
-
-    /**
-     * Returns model of target
-     * @param ManagerRegistry|null $registry
-     * @return SimpleModelInterface|null
-     */
-    public function getModel(ManagerRegistry $registry = null): ?SimpleModelInterface
-    {
-        if (is_null($this->model) && $this->getClassName()) {
-            $repo = $this->getTargetRepository($registry ?: $this->getRegistry());
-            if (!is_null($this->getId())) {
-                $this->model = $repo->find($this->getId());
-            } else if ($repo instanceof EntityRepositoryInterface) {
-                $this->model = $repo->createNew();
-            } else {
-                $className = $this->getClassName();
-                $this->model = new $className();
-            }
-        }
-
-        return $this->model;
-    }
-
-    /**
-     * Returns target repository
-     * @param ManagerRegistry|null $registry
-     * @return ObjectRepository
-     */
-    public function getTargetRepository(ManagerRegistry $registry = null): ObjectRepository
-    {
-        $repository = null;
-        if ($this->getClassName()) {
-            $registry = $registry ?: $this->getRegistry();
-            $repository = $registry->getRepository($this->getClassName());
-        }
-        if (!$repository) {
-            throw new TargetException(sprintf('Undefined className'));
-        }
-
-        return $repository;
     }
 
     /**
@@ -193,8 +151,38 @@ class Target
     {
         $this->setIdFromModel($this->getModel());
         $this->setClassNameFromModel($this->getModel());
-
         return $this;
+    }
+
+    /**
+     * Returns model of target
+     * @param bool $throwExceptionOnNull
+     * @return SimpleModelInterface|null
+     */
+    public function getModel(bool $throwExceptionOnNull = false): ?SimpleModelInterface
+    {
+        if (is_null($this->model) && $this->getClassName()) {
+            $event = new LoadTargetModel($this);
+            $this->eventDispatcher->dispatch($event);
+            $this->model = $event->getModel();
+        }
+        if (!$this->model && $throwExceptionOnNull) {
+            throw new InvalidTargetException(sprintf('Unable to load model of class %s', $this->getClassName()));
+        }
+        return $this->model;
+    }
+
+    /**
+     * Returns model id
+     * @return mixed
+     */
+    public function getModelId()
+    {
+        try {
+            return $this->getModel(true)->getId();
+        } catch (InvalidTargetException $e) {
+            return null;
+        }
     }
 
     /**

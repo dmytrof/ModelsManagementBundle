@@ -10,7 +10,7 @@ services:
         resource: '../../*'
         exclude: '../../{Entity, Model}'
 
-    Dmytrof\ModelsManagementBundle\EventListener\ModelDoctrineSubscriber:
+    Dmytrof\ModelsManagementBundle\EventSubscriber\ModelDoctrineSubscriber:
         tags:
             - { name: doctrine.event_subscriber }
 

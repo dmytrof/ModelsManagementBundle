@@ -11,23 +11,23 @@
 
 namespace Dmytrof\ModelsManagementBundle\Model;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Dmytrof\ModelsManagementBundle\{Model\Target, Model\SimpleModelInterface, Exception\InvalidTargetException};
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 interface TargetedModelInterface
 {
     /**
-     * Sets registry
-     * @param ManagerRegistry $registry
+     * Sets event dispatcher
+     * @param EventDispatcherInterface $eventDispatcher
      * @return TargetedModelInterface
      */
-    public function setRegistry(ManagerRegistry $registry): TargetedModelInterface;
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): TargetedModelInterface;
 
     /**
-     * Returns registry
-     * @return null|ManagerRegistry
+     * Returns event dispatcher
+     * @return EventDispatcherInterface
      */
-    public function getRegistry(): ?ManagerRegistry;
+    public function getEventDispatcher(): EventDispatcherInterface;
 
     /**
      * Sets target
@@ -38,7 +38,6 @@ interface TargetedModelInterface
 
     /**
      * Returns target
-     * @throws InvalidTargetException
      * @return Target
      */
     public function getTarget(): Target;

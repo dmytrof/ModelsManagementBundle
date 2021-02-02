@@ -11,7 +11,7 @@
 
 namespace Dmytrof\ModelsManagementBundle\Tests\Manager;
 
-use Dmytrof\ModelsManagementBundle\EventListener\ModelDoctrineSubscriber;
+use Dmytrof\ModelsManagementBundle\EventSubscriber\ModelDoctrineSubscriber;
 use Dmytrof\ModelsManagementBundle\Exception\{ModelValidationException, NotFoundException, NotDeletableModelException};
 use Dmytrof\ModelsManagementBundle\Manager\AbstractDoctrineManager;
 use Dmytrof\ModelsManagementBundle\Model\SimpleModelInterface;
@@ -23,6 +23,7 @@ use Symfony\Component\Validator\{ConstraintViolation,
     ConstraintViolationList,
     Validator\ValidatorInterface};
 use PHPUnit\Framework\TestCase;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class AbstractDoctrineManagerTest extends TestCase
 {
@@ -35,7 +36,7 @@ class AbstractDoctrineManagerTest extends TestCase
     {
         parent::setUp();
 
-        $registry = $this->createMock(ManagerRegistry::class);
+        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $eventManager = $this->createMock(EventManager::class);
         $eventManager->method('dispatchEvent')->willReturn(true);
@@ -47,8 +48,8 @@ class AbstractDoctrineManagerTest extends TestCase
         $entityManager->method('find')->willReturnCallback(function ($className, $id, $lockMode, $lockVersion) {
             return ($id == 1) ? (new SomeModel())->setId(1) : null;
         });
-        $entityManager->method('remove')->willReturnCallback(function (SimpleModelInterface $model) use ($registry, $entityManager) {
-            $subscriber = new ModelDoctrineSubscriber($registry);
+        $entityManager->method('remove')->willReturnCallback(function (SimpleModelInterface $model) use ($entityManager, $eventDispatcher) {
+            $subscriber = new ModelDoctrineSubscriber($eventDispatcher);
             $subscriber->preRemove(new LifecycleEventArgs($model, $entityManager));
         });
 

@@ -11,17 +11,17 @@
 
 namespace Dmytrof\ModelsManagementBundle\Model\Traits;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Validator\Constraints as Assert;
 use Dmytrof\ModelsManagementBundle\Model\{SimpleModelInterface, TargetedModelInterface, Target};
 use Dmytrof\ModelsManagementBundle\Exception\InvalidTargetException;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 trait TargetedModelTrait
 {
     /**
-     * @var ManagerRegistry
+     * @var EventDispatcherInterface
      */
-    protected $registry;
+    protected $eventDispatcher;
 
     /**
      * @var string
@@ -36,33 +36,33 @@ trait TargetedModelTrait
     protected $targetObj;
 
     /**
-     * Sets doctrine
-     * @param ManagerRegistry $registry
+     * Sets event dispatcher
+     * @param EventDispatcherInterface $eventDispatcher
      * @return TargetedModelInterface
      */
-    public function setRegistry(ManagerRegistry $registry): TargetedModelInterface
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): TargetedModelInterface
     {
-        $this->registry = $registry;
+        $this->eventDispatcher = $eventDispatcher;
         return $this;
     }
 
     /**
-     * Returns registry
-     * @return null|ManagerRegistry
+     * Returns event dispatcher
+     * @return EventDispatcherInterface
      */
-    public function getRegistry(): ?ManagerRegistry
+    public function getEventDispatcher(): EventDispatcherInterface
     {
-        return $this->registry;
+        return $this->eventDispatcher;
     }
 
     /**
      * Sets target
-     * @param Target|SimpleModelInterface $target
+     * @param Target|SimpleModelInterface|null $target
      * @return TargetedModelInterface
      */
     public function setTarget($target): TargetedModelInterface
     {
-        $target = ($target instanceof Target) ? $target : new Target($this->getRegistry(), $target);
+        $target = ($target instanceof Target) ? $target : new Target($this->eventDispatcher, $target);
         $this->updateTargetData($target);
         $this->targetObj = $target;
         return $this;
@@ -74,28 +74,33 @@ trait TargetedModelTrait
      */
     public function refreshTarget(): TargetedModelInterface
     {
-        $this->getTarget()->refresh();
-        $this->updateTargetData($this->getTarget());
+        if ($this->getTarget()->getModelId()) {
+            $this->getTarget()->refresh();
+            $this->updateTargetData($this->getTarget());
+        } else {
+            $this->target = null;
+        }
+
         return $this;
     }
 
     /**
-     * @param Target $target
+     * Updated target data
+     * @param Target|null $target
      */
-    private function updateTargetData(Target $target): void
+    private function updateTargetData(?Target $target): void
     {
-        $this->target = $target->toArray();
+        $this->target = $target->getId() ? $target->toArray() : null;
     }
 
     /**
      * Returns target
-     * @throws InvalidTargetException
      * @return Target
      */
     public function getTarget(): Target
     {
         if (is_null($this->targetObj)) {
-            $this->targetObj = new Target($this->getRegistry());
+            $this->targetObj = new Target($this->eventDispatcher);
             if (is_array($this->target)) {
                 $this->targetObj->fromArray($this->target);
             }
@@ -110,8 +115,8 @@ trait TargetedModelTrait
     public function hasTarget(): bool
     {
         try {
-            return !is_null($this->target) && $this->getTarget()->getId() && $this->getTarget()->getModel() instanceof SimpleModelInterface;
-        } catch (\Exception $e) {
+            return $this->getTarget()->getId() && $this->getTarget()->getModel() instanceof SimpleModelInterface;
+        } catch (InvalidTargetException $e) {
             return false;
         }
     }
@@ -129,7 +134,7 @@ trait TargetedModelTrait
      */
     protected function _destructTargetedModel()
     {
-        $this->registry = null;
+        $this->eventDispatcher = null;
         $this->target = null;
         $this->targetObj = null;
     }

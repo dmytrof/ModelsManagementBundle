@@ -9,27 +9,32 @@
  * file that was distributed with this source code.
  */
 
-namespace Dmytrof\ModelsManagementBundle\EventListener;
+namespace Dmytrof\ModelsManagementBundle\EventSubscriber;
 
+use Dmytrof\ModelsManagementBundle\EventSubscriber\Traits\UpdatedEntitiesTrait;
 use Dmytrof\ModelsManagementBundle\Exception\NotDeletableModelException;
+use Dmytrof\ModelsManagementBundle\Model\{ConditionalDeletionInterface, TargetedModelInterface};
+use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
-use Dmytrof\ModelsManagementBundle\Model\{ConditionalDeletionInterface, TargetedModelInterface, Target};
-use Doctrine\Common\{EventSubscriber, Persistence\Event\LifecycleEventArgs, Persistence\ManagerRegistry};
+use Doctrine\Common\{EventSubscriber, Persistence\Event\LifecycleEventArgs};
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class ModelDoctrineSubscriber implements EventSubscriber
 {
+    use UpdatedEntitiesTrait;
+
     /**
-     * @var ManagerRegistry
+     * @var EventDispatcherInterface
      */
-    protected $registry;
+    protected $eventDispatcher;
 
     /**
      * ModelDoctrineSubscriber constructor.
-     * @param ManagerRegistry $registry
+     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(EventDispatcherInterface $eventDispatcher)
     {
-        $this->registry = $registry;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -46,6 +51,7 @@ class ModelDoctrineSubscriber implements EventSubscriber
             Events::preUpdate,
             Events::postUpdate,
             Events::preRemove,
+            Events::postFlush,
         ];
     }
 
@@ -53,29 +59,10 @@ class ModelDoctrineSubscriber implements EventSubscriber
      * Sets registry to target
      * @param LifecycleEventArgs $args
      */
-    protected function setRegistryToTargetedModel(LifecycleEventArgs $args): void
+    protected function setEventDispatcherToTargetedModel(LifecycleEventArgs $args): void
     {
         if ($args->getObject() instanceof TargetedModelInterface) {
-            $args->getObject()->setRegistry($this->registry);
-        }
-    }
-
-    /**
-     * Updates target
-     * @param LifecycleEventArgs $args
-     */
-    protected function updateTarget(LifecycleEventArgs $args): void
-    {
-        $entity = $args->getObject();
-        if ($entity instanceof TargetedModelInterface && $entity->getTarget()->getClassName()) {
-            if (!$entity->getTarget()->getId() && $entity->getTarget()->getModel()) {
-                if (!$entity->getTarget()->getModel()->getId()) {
-                    $args->getObjectManager()->getEventManager()->addEventListener(Events::postPersist, new NewTargetDoctrineListener($entity));
-                } else {
-                    $entity->refreshTarget();
-                    $args->getObjectManager()->flush();
-                }
-            }
+            $args->getObject()->setEventDispatcher($this->eventDispatcher);
         }
     }
 
@@ -85,7 +72,7 @@ class ModelDoctrineSubscriber implements EventSubscriber
      */
     public function postLoad(LifecycleEventArgs $args)
     {
-        $this->setRegistryToTargetedModel($args);
+        $this->setEventDispatcherToTargetedModel($args);
     }
 
     /**
@@ -94,7 +81,7 @@ class ModelDoctrineSubscriber implements EventSubscriber
      */
     public function prePersist(LifecycleEventArgs $args)
     {
-        $this->setRegistryToTargetedModel($args);
+        $this->setEventDispatcherToTargetedModel($args);
     }
 
     /**
@@ -103,7 +90,7 @@ class ModelDoctrineSubscriber implements EventSubscriber
      */
     public function preUpdate(LifecycleEventArgs $args)
     {
-        $this->setRegistryToTargetedModel($args);
+        $this->setEventDispatcherToTargetedModel($args);
     }
 
     /**
@@ -112,7 +99,10 @@ class ModelDoctrineSubscriber implements EventSubscriber
      */
     public function postPersist(LifecycleEventArgs $args)
     {
-        $this->updateTarget($args);
+        $entity = $args->getObject();
+        if ($entity instanceof TargetedModelInterface) {
+            $this->addUpdatedEntity($entity);
+        }
     }
 
     /**
@@ -121,7 +111,10 @@ class ModelDoctrineSubscriber implements EventSubscriber
      */
     public function postUpdate(LifecycleEventArgs $args)
     {
-        $this->updateTarget($args);
+        $entity = $args->getObject();
+        if ($entity instanceof TargetedModelInterface) {
+            $this->addUpdatedEntity($entity);
+        }
     }
 
     /**
@@ -134,5 +127,23 @@ class ModelDoctrineSubscriber implements EventSubscriber
         if ($entity instanceof ConditionalDeletionInterface && !$entity->canBeDeleted()) {
             throw new NotDeletableModelException();
         }
+    }
+
+    /**
+     * @param PostFlushEventArgs $args
+     */
+    public function postFlush(PostFlushEventArgs $args): void
+    {
+        if ($this->hasUpdatedEntities()) {
+            foreach ($this->getUpdatedEntities() as $entity) {
+                if ($entity instanceof TargetedModelInterface && !$entity->hasTarget()) {
+                    $entity->refreshTarget();
+                    $this->setNeedsFlush();
+                }
+            }
+            $this->cleanupUpdatedEntities();
+            sleep(1);
+        }
+        $this->makeFlushIfNeeded($args->getEntityManager());
     }
 }

@@ -11,9 +11,9 @@
 
 namespace Dmytrof\ModelsManagementBundle\Tests\Model;
 
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Dmytrof\ModelsManagementBundle\Model\{Target, TargetedModelInterface};
 use Dmytrof\ModelsManagementBundle\Tests\Data\{SomeModel, TargetedModel};
-use Doctrine\Common\Persistence\ManagerRegistry;
 use PHPUnit\Framework\TestCase;
 
 class TargetedModelTest extends TestCase
@@ -24,18 +24,18 @@ class TargetedModelTest extends TestCase
      */
     public function createTargetedModel(): TargetedModelInterface
     {
-        $registry = $this->createMock(ManagerRegistry::class);
-        return (new TargetedModel())->setRegistry($registry);
+        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        return (new TargetedModel())->setEventDispatcher($eventDispatcher);
     }
 
     public function testNewTargetedModel(): void
     {
         $targetedModel = $this->createTargetedModel();
 
-        $this->assertInstanceOf(ManagerRegistry::class, $targetedModel->getRegistry());
+        $this->assertInstanceOf(EventDispatcherInterface::class, $targetedModel->getEventDispatcher());
         $this->assertInstanceOf(Target::class, $targetedModel->getTarget());
         $this->assertFalse($targetedModel->hasTarget());
-        $this->assertEquals(new Target($targetedModel->getRegistry()), $targetedModel->getTarget());
+        $this->assertEquals(new Target($targetedModel->getEventDispatcher()), $targetedModel->getTarget());
     }
 
     public function testTarget(): void
@@ -46,7 +46,7 @@ class TargetedModelTest extends TestCase
         $targetedModel->setTarget($targetModel);
 
         $this->assertFalse($targetedModel->hasTarget());
-        $this->assertEquals(new Target($targetedModel->getRegistry(), $targetModel), $targetedModel->getTarget());
+        $this->assertEquals(new Target($targetedModel->getEventDispatcher(), $targetModel), $targetedModel->getTarget());
         $this->assertEquals(['className' => SomeModel::class, 'id' => 0], $targetedModel->getTarget()->toArray());
 
         $targetModel->setId(3);
