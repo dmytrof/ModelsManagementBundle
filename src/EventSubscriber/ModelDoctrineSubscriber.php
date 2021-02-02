@@ -142,7 +142,6 @@ class ModelDoctrineSubscriber implements EventSubscriber
                 }
             }
             $this->cleanupUpdatedEntities();
-            sleep(1);
         }
         $this->makeFlushIfNeeded($args->getEntityManager());
     }
