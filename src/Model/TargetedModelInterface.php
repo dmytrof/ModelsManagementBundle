@@ -12,23 +12,9 @@
 namespace Dmytrof\ModelsManagementBundle\Model;
 
 use Dmytrof\ModelsManagementBundle\{Model\Target, Model\SimpleModelInterface, Exception\InvalidTargetException};
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-interface TargetedModelInterface
+interface TargetedModelInterface extends EventableModelInterface
 {
-    /**
-     * Sets event dispatcher
-     * @param EventDispatcherInterface $eventDispatcher
-     * @return TargetedModelInterface
-     */
-    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): TargetedModelInterface;
-
-    /**
-     * Returns event dispatcher
-     * @return EventDispatcherInterface
-     */
-    public function getEventDispatcher(): EventDispatcherInterface;
-
     /**
      * Sets target
      * @param Target|SimpleModelInterface $target

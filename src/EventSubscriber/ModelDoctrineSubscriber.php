@@ -13,7 +13,9 @@ namespace Dmytrof\ModelsManagementBundle\EventSubscriber;
 
 use Dmytrof\ModelsManagementBundle\EventSubscriber\Traits\UpdatedEntitiesTrait;
 use Dmytrof\ModelsManagementBundle\Exception\NotDeletableModelException;
-use Dmytrof\ModelsManagementBundle\Model\{ConditionalDeletionInterface, TargetedModelInterface};
+use Dmytrof\ModelsManagementBundle\Model\{ConditionalDeletionInterface,
+    EventableModelInterface,
+    TargetedModelInterface};
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\Common\{EventSubscriber, Persistence\Event\LifecycleEventArgs};
@@ -48,7 +50,6 @@ class ModelDoctrineSubscriber implements EventSubscriber
             Events::postLoad,
             Events::prePersist,
             Events::postPersist,
-            Events::preUpdate,
             Events::postUpdate,
             Events::preRemove,
             Events::postFlush,
@@ -59,9 +60,9 @@ class ModelDoctrineSubscriber implements EventSubscriber
      * Sets registry to target
      * @param LifecycleEventArgs $args
      */
-    protected function setEventDispatcherToTargetedModel(LifecycleEventArgs $args): void
+    protected function setEventDispatcherToEventableModel(LifecycleEventArgs $args): void
     {
-        if ($args->getObject() instanceof TargetedModelInterface) {
+        if ($args->getObject() instanceof EventableModelInterface) {
             $args->getObject()->setEventDispatcher($this->eventDispatcher);
         }
     }
@@ -72,7 +73,7 @@ class ModelDoctrineSubscriber implements EventSubscriber
      */
     public function postLoad(LifecycleEventArgs $args)
     {
-        $this->setEventDispatcherToTargetedModel($args);
+        $this->setEventDispatcherToEventableModel($args);
     }
 
     /**
@@ -81,16 +82,7 @@ class ModelDoctrineSubscriber implements EventSubscriber
      */
     public function prePersist(LifecycleEventArgs $args)
     {
-        $this->setEventDispatcherToTargetedModel($args);
-    }
-
-    /**
-     * @param LifecycleEventArgs $args
-     * @return void
-     */
-    public function preUpdate(LifecycleEventArgs $args)
-    {
-        $this->setEventDispatcherToTargetedModel($args);
+        $this->setEventDispatcherToEventableModel($args);
     }
 
     /**

@@ -13,14 +13,10 @@ namespace Dmytrof\ModelsManagementBundle\Model\Traits;
 
 use Dmytrof\ModelsManagementBundle\Model\{SimpleModelInterface, TargetedModelInterface, Target};
 use Dmytrof\ModelsManagementBundle\Exception\InvalidTargetException;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 trait TargetedModelTrait
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
+    use EventableModelTrait;
 
     /**
      * @var array
@@ -31,26 +27,6 @@ trait TargetedModelTrait
      * @var Target
      */
     protected $targetObj;
-
-    /**
-     * Sets event dispatcher
-     * @param EventDispatcherInterface $eventDispatcher
-     * @return TargetedModelInterface
-     */
-    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): TargetedModelInterface
-    {
-        $this->eventDispatcher = $eventDispatcher;
-        return $this;
-    }
-
-    /**
-     * Returns event dispatcher
-     * @return EventDispatcherInterface
-     */
-    public function getEventDispatcher(): EventDispatcherInterface
-    {
-        return $this->eventDispatcher;
-    }
 
     /**
      * Sets target
