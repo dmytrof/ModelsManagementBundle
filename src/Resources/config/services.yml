@@ -14,6 +14,10 @@ services:
         tags:
             - { name: doctrine.event_subscriber }
 
+    Dmytrof\ModelsManagementBundle\EventSubscriber\ModificationEventsDoctrineSubscriber:
+        tags:
+            - { name: doctrine.event_subscriber }
+
     Dmytrof\ModelsManagementBundle\Service\ManagersContainer:
         public: true
         arguments:
