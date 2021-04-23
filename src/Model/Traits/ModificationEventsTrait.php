@@ -2,7 +2,7 @@
 
 namespace Dmytrof\ModelsManagementBundle\Model\Traits;
 
-use Dmytrof\ModelsManagementBundle\Event\ModificationEvent;
+use Dmytrof\ModelsManagementBundle\Event\ModificationEventInterface;
 use Dmytrof\ModelsManagementBundle\Model\ModificationEventsInterface;
 
 trait ModificationEventsTrait
@@ -23,10 +23,10 @@ trait ModificationEventsTrait
 
     /**
      * Adds modification events
-     * @param ModificationEvent $event
+     * @param ModificationEventInterface $event
      * @return ModificationEventsInterface
      */
-    public function addModificationEvent(ModificationEvent $event): ModificationEventsInterface
+    public function addModificationEvent(ModificationEventInterface $event): ModificationEventsInterface
     {
         array_push($this->modificationEvents, $event);
         return $this;

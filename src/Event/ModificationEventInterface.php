@@ -11,10 +11,18 @@
 
 namespace Dmytrof\ModelsManagementBundle\Event;
 
-use Dmytrof\ModelsManagementBundle\Event\Traits\ModificationEventTrait;
-use Symfony\Contracts\EventDispatcher\Event;
-
-abstract class ModificationEvent extends Event implements ModificationEventInterface
+interface ModificationEventInterface
 {
-    use ModificationEventTrait;
+    /**
+     * Checks if flush needed
+     * @return bool
+     */
+    public function isNeedsFlush(): bool;
+
+    /**
+     * Sets needs flush
+     * @param bool $needsFlush
+     * @return $this
+     */
+    public function setNeedsFlush(bool $needsFlush): self;
 }

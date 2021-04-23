@@ -2,22 +2,22 @@
 
 namespace Dmytrof\ModelsManagementBundle\Model;
 
-use Dmytrof\ModelsManagementBundle\Event\ModificationEvent;
+use Dmytrof\ModelsManagementBundle\Event\ModificationEventInterface;
 
 interface ModificationEventsInterface
 {
     /**
      * Returns modification events
-     * @return array|ModificationEvent[]
+     * @return array|ModificationEventInterface[]
      */
     public function getModificationEvents(): array;
 
     /**
      * Adds modification events
-     * @param ModificationEvent $event
+     * @param ModificationEventInterface $event
      * @return $this
      */
-    public function addModificationEvent(ModificationEvent $event): self;
+    public function addModificationEvent(ModificationEventInterface $event): self;
 
     /**
      * Clears modification events
