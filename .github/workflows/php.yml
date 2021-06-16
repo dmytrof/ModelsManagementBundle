@@ -1,4 +1,4 @@
-name: PHP Composer
+name: PHP7.2 Composer
 
 on: [push]
 
