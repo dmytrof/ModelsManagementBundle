@@ -18,7 +18,8 @@ use Dmytrof\ModelsManagementBundle\Model\{ConditionalDeletionInterface,
     TargetedModelInterface};
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
-use Doctrine\Common\{EventSubscriber, Persistence\Event\LifecycleEventArgs};
+use Doctrine\Common\EventSubscriber;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class ModelDoctrineSubscriber implements EventSubscriber

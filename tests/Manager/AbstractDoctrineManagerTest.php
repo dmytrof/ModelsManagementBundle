@@ -15,8 +15,10 @@ use Dmytrof\ModelsManagementBundle\EventSubscriber\ModelDoctrineSubscriber;
 use Dmytrof\ModelsManagementBundle\Exception\{ModelValidationException, NotFoundException, NotDeletableModelException};
 use Dmytrof\ModelsManagementBundle\Manager\AbstractDoctrineManager;
 use Dmytrof\ModelsManagementBundle\Model\SimpleModelInterface;
-use Doctrine\Common\{EventManager, Persistence\ManagerRegistry};
-use Doctrine\ORM\{EntityManagerInterface, Event\LifecycleEventArgs, Mapping\ClassMetadata};
+use Doctrine\Common\EventManager;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Doctrine\ORM\{EntityManagerInterface, Mapping\ClassMetadata};
 use Dmytrof\ModelsManagementBundle\Tests\Data\{SomeModel, SomeModelDoctrineManager, SomeModelRepository};
 use Symfony\Component\Form\{FormFactoryBuilder, FormFactoryInterface};
 use Symfony\Component\Validator\{ConstraintViolation,

@@ -17,6 +17,7 @@
         "symfony/validator": "^4.3 || ^5.0",
         "symfony/form": "^4.3 || ^5.0",
         "doctrine/orm": "^2.6",
+        "doctrine/inflector": "^2.0",
         "gedmo/doctrine-extensions": "^2.4 || ^3.0"
     },
     "require-dev": {

@@ -11,7 +11,8 @@
 
 namespace Dmytrof\ModelsManagementBundle\Model\Traits;
 
-use Doctrine\Common\Inflector\Inflector;
+use Doctrine\Inflector\Inflector;
+use Doctrine\Inflector\InflectorFactory;
 
 trait DefinedModelTrait
 {
@@ -30,6 +31,6 @@ trait DefinedModelTrait
      */
     public static function getClassName(): string
     {
-        return ucwords(str_replace('_', ' ', Inflector::tableize(static::getClassCode())));
+        return ucwords(str_replace('_', ' ', InflectorFactory::create()->build()->tableize(static::getClassCode())));
     }
 }
