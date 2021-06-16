@@ -12,7 +12,7 @@
 namespace Dmytrof\ModelsManagementBundle\Manager;
 
 use Doctrine\ORM\{EntityManagerInterface, Mapping\ClassMetadata};
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\{Form\FormFactoryInterface, Validator\Validator\ValidatorInterface};
 use Symfony\Component\OptionsResolver\{Options, OptionsResolver};
 use Dmytrof\ModelsManagementBundle\Model\{DoctrinePaginator, SimpleModelInterface};

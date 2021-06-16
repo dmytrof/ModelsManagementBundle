@@ -13,7 +13,7 @@ namespace Dmytrof\ModelsManagementBundle\EventSubscriber;
 
 use Dmytrof\ModelsManagementBundle\Event\LoadTargetModel;
 use Dmytrof\ModelsManagementBundle\Repository\EntityRepositoryInterface;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class ModelEventsSubscriber implements EventSubscriberInterface

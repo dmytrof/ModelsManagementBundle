@@ -13,12 +13,8 @@ namespace Dmytrof\ModelsManagementBundle\Tests\Model;
 
 use Dmytrof\ModelsManagementBundle\Event\LoadTargetModel;
 use Dmytrof\ModelsManagementBundle\Exception\InvalidTargetException;
-use Dmytrof\ModelsManagementBundle\Exception\TargetException;
-use Dmytrof\ModelsManagementBundle\Model\SimpleModelInterface;
 use Dmytrof\ModelsManagementBundle\Model\Target;
-use Dmytrof\ModelsManagementBundle\Model\Traits\SimpleModelTrait;
 use Dmytrof\ModelsManagementBundle\Tests\Data\SomeModel;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
