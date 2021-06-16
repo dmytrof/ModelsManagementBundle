@@ -12,7 +12,7 @@
 namespace Dmytrof\ModelsManagementBundle\Repository;
 
 use Dmytrof\ModelsManagementBundle\Model\{DoctrinePaginator, SimpleModelInterface};
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
