@@ -12,8 +12,7 @@
 namespace Dmytrof\ModelsManagementBundle\Model\Traits;
 
 use Dmytrof\ModelsManagementBundle\Model\ArrayConvertibleModelInterface;
-use Doctrine\Inflector\Inflector;
-use Doctrine\Inflector\InflectorFactory;
+use Doctrine\Inflector\{Inflector, NoopWordInflector};
 
 trait ArrayConvertibleModelTrait
 {
@@ -24,8 +23,9 @@ trait ArrayConvertibleModelTrait
     public function toArray(): array
     {
         $array = [];
+        $inflector = (new Inflector(new NoopWordInflector(), new NoopWordInflector()));
         foreach (get_object_vars($this) as $property => $value) {
-            $method = 'toArray'.InflectorFactory::create()->build()->classify($property);
+            $method = 'toArray'.$inflector->classify($property);
             if (method_exists($this, $method)) {
                 $array[$property] = $this->$method($value);
             } else if (is_scalar($value) || is_array($value)) {
@@ -47,8 +47,9 @@ trait ArrayConvertibleModelTrait
      */
     public function fromArray(array $data): ArrayConvertibleModelInterface
     {
+        $inflector = (new Inflector(new NoopWordInflector(), new NoopWordInflector()));
         foreach ($data as $key => $value) {
-            $method = 'fromArray'.InflectorFactory::create()->build()->classify($key);
+            $method = 'fromArray'.$inflector->classify($key);
             if (method_exists($this, $method)) {
                 $this->$method($value);
             } else if (property_exists($this, $key)) {
