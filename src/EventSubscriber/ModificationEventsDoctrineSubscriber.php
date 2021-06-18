@@ -15,7 +15,8 @@ use Dmytrof\ModelsManagementBundle\EventSubscriber\Traits\UpdatedEntitiesTrait;
 use Dmytrof\ModelsManagementBundle\Model\ModificationEventsInterface;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
-use Doctrine\Common\{EventSubscriber, Persistence\Event\LifecycleEventArgs};
+use Doctrine\Common\EventSubscriber;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class ModificationEventsDoctrineSubscriber implements EventSubscriber

@@ -11,7 +11,7 @@
 
 namespace Dmytrof\ModelsManagementBundle\EventSubscriber\Traits;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 
 trait UpdatedEntitiesTrait
 {
