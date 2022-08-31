@@ -49,7 +49,7 @@ class NotDeletableModelException extends RuntimeException implements HttpExcepti
     /**
      * @inheritDoc
      */
-    public function getStatusCode()
+    public function getStatusCode(): int
     {
         return $this->statusCode;
     }
@@ -57,7 +57,7 @@ class NotDeletableModelException extends RuntimeException implements HttpExcepti
     /**
      * @inheritDoc
      */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->headers;
     }

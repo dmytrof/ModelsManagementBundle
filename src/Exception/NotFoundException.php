@@ -19,7 +19,7 @@ class NotFoundException extends RuntimeException implements HttpExceptionInterfa
     /**
      * @inheritDoc
      */
-    public function getStatusCode()
+    public function getStatusCode(): int
     {
         return 404;
     }
@@ -27,7 +27,7 @@ class NotFoundException extends RuntimeException implements HttpExceptionInterfa
     /**
      * @inheritDoc
      */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return [];
     }
