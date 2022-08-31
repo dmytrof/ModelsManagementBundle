@@ -52,7 +52,7 @@ class FormErrorsException extends RuntimeException implements HttpExceptionInter
     {
         $errors = [];
         $getPropertyPath = function(FormError $error, FormInterface $form) {
-            $path = $error->getCause() ? $error->getCause()->getPropertyPath() : null;
+            $path = $error->getCause() && method_exists($error->getCause(), 'getPropertyPath') ? $error->getCause()->getPropertyPath() : null;
             if (is_null($path) && $error->getOrigin()->getPropertyPath()) {
                 $pathParts = [];
                 $form = $error->getOrigin();
@@ -64,10 +64,10 @@ class FormErrorsException extends RuntimeException implements HttpExceptionInter
             }
             $path = preg_replace('/children\[([^\]]+)\]/', '${1}', $path);
             $path = preg_replace('/\[(\d+)\]/', '.${1}', $path);
-            if (substr($path, 0, 5) == 'data.') {
+            if (substr($path, 0, 5) === 'data.') {
                 $path = substr($path, 5);
             }
-            if (substr($path, -5) == '.data') {
+            if (substr($path, -5) === '.data') {
                 $path = substr($path, 0,-5);
             }
             return $path;
@@ -78,7 +78,7 @@ class FormErrorsException extends RuntimeException implements HttpExceptionInter
             if (!isset($errors[$path])) {
                 $errors[$path] = [];
             }
-            array_push($errors[$path], $error->getMessage());
+            $errors[$path][] = $error->getMessage();
         }
 
         return $errors;
