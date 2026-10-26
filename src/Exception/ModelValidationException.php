@@ -23,7 +23,7 @@ class ModelValidationException extends ModelException
      * @param int $code
      * @param \Throwable|null $previous
      */
-    public function __construct(ConstraintViolationListInterface $errors, $message = "Validation error: %s", $code = 0, \Throwable $previous = null)
+    public function __construct(ConstraintViolationListInterface $errors, $message = "Validation error: %s", $code = 0, ?\Throwable $previous = null)
     {
         $errorMessages = [];
         foreach ($errors as $error) {

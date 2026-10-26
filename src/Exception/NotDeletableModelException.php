@@ -37,7 +37,7 @@ class NotDeletableModelException extends RuntimeException implements HttpExcepti
      * @param int $code
      * @param Throwable|null $previous
      */
-    public function __construct($message = null, $statusCode = null, array $headers = [], $code = 0, Throwable $previous = null)
+    public function __construct($message = null, $statusCode = null, array $headers = [], $code = 0, ?Throwable $previous = null)
     {
         $message = 'Deletion prohibited'. ($message ? ': '.$message : '');
         parent::__construct($message, $code, $previous);
