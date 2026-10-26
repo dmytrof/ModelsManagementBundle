@@ -87,7 +87,7 @@ class Paginator implements PaginatorInterface
     /**
      * {@inheritDoc}
      */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         return new \ArrayIterator($this->getItems());
     }

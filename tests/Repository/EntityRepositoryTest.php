@@ -31,7 +31,7 @@ class EntityRepositoryTest extends TestCase
     public function setUp(): void
     {
         $eventManager = $this->createMock(EventManager::class);
-        $eventManager->method('dispatchEvent')->willReturn(true);
+        $eventManager->method('dispatchEvent')->willReturnCallback(static function () {});
 
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $entityManager->method('getEventManager')->willReturn($eventManager);

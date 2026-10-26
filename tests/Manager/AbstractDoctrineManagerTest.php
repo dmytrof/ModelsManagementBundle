@@ -41,7 +41,7 @@ class AbstractDoctrineManagerTest extends TestCase
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $eventManager = $this->createMock(EventManager::class);
-        $eventManager->method('dispatchEvent')->willReturn(true);
+        $eventManager->method('dispatchEvent')->willReturnCallback(static function () {});
 
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $entityManager->method('getEventManager')->willReturn($eventManager);

@@ -36,7 +36,7 @@ class ManagersContainer implements \IteratorAggregate
     /**
      * {@inheritdoc}
      */
-    public function getIterator()
+    public function getIterator():\Traversable
     {
         return $this->managers->getIterator();
     }
