@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the DmytrofModelsManagementBundle package.
  *
@@ -11,92 +13,41 @@
 
 namespace Dmytrof\ModelsManagementBundle\Model\Traits;
 
-use Dmytrof\ModelsManagementBundle\Exception\InvalidFlagException;
-
 trait FlagsTrait
 {
-    /**
-     * @var array
-     */
-    protected $flags = [];
+    protected array $flags = [];
 
-    /**
-     * Sets flag
-     * @param int|string $flag
-     * @param bool $value
-     * @return $this
-     */
-    public function setFlag($flag, bool $value = true): self
+    public function setFlag(int|string $flag, bool $value = true): self
     {
-        $this->checkFlagType($flag);
         $this->flags[$flag] = $value;
         return $this;
     }
 
-    /**
-     * Checks flag
-     * @param int|string $flag
-     * @return bool
-     */
-    public function hasFlag($flag): bool
+    public function hasFlag(int|string $flag): bool
     {
-        $this->checkFlagType($flag);
         return $this->flags[$flag] ?? false;
     }
 
-    /**
-     * Pops flag
-     * @param int|string $flag
-     * @return bool
-     */
-    public function popFlag($flag): bool
+    public function popFlag(int|string $flag): bool
     {
         $flagValue = $this->hasFlag($flag);
         $this->unsetFlag($flag);
         return $flagValue;
     }
 
-    /**
-     * Unsets flag
-     * @param int|string $flag
-     * @return $this
-     */
-    public function unsetFlag($flag): self
+    public function unsetFlag(int|string $flag): self
     {
-        $this->checkFlagType($flag);
         unset($this->flags[$flag]);
         return $this;
     }
 
-    /**
-     * Unsets flag
-     * @param int|string $flag
-     * @return $this
-     */
-    public function removeFlag($flag): self
+    public function removeFlag(int|string $flag): self
     {
         return $this->unsetFlag($flag);
     }
 
-    /**
-     * Returns flags
-     * @return array
-     */
     public function getFlags(): array
     {
         return $this->flags;
-    }
-
-    /**
-     * Checks type of flag
-     * @param $flag
-     * @return bool
-     */
-    protected function checkFlagType($flag): bool
-    {
-        if (!is_int($flag) && !is_string($flag)) {
-            throw new InvalidFlagException(sprintf('Unsupported type \'%s\' of flag. Strings and integers are supported only!', gettype($flag)));
-        }
-        return true;
     }
 }

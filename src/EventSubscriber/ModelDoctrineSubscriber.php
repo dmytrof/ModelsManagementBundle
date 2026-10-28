@@ -17,6 +17,11 @@ use Dmytrof\ModelsManagementBundle\Model\{ConditionalDeletionInterface,
     EventableModelInterface,
     TargetedModelInterface};
 use Doctrine\ORM\Event\PostFlushEventArgs;
+use Doctrine\ORM\Event\PostLoadEventArgs;
+use Doctrine\ORM\Event\PostPersistEventArgs;
+use Doctrine\ORM\Event\PostUpdateEventArgs;
+use Doctrine\ORM\Event\PrePersistEventArgs;
+use Doctrine\ORM\Event\PreRemoveEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
@@ -26,26 +31,12 @@ class ModelDoctrineSubscriber implements EventSubscriber
 {
     use UpdatedEntitiesTrait;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    /**
-     * ModelDoctrineSubscriber constructor.
-     * @param EventDispatcherInterface $eventDispatcher
-     */
-    public function __construct(EventDispatcherInterface $eventDispatcher)
-    {
-        $this->eventDispatcher = $eventDispatcher;
+    public function __construct(
+        private EventDispatcherInterface $eventDispatcher,
+    ) {
     }
 
-    /**
-     * Get subscribed events
-     *
-     * @return array
-     */
-    public function getSubscribedEvents()
+    public function getSubscribedEvents(): array
     {
         return [
             Events::postLoad,
@@ -59,38 +50,27 @@ class ModelDoctrineSubscriber implements EventSubscriber
 
     /**
      * Sets registry to target
-     * @param LifecycleEventArgs $args
      */
     protected function setEventDispatcherToEventableModel(LifecycleEventArgs $args): void
     {
+        dump(__METHOD__, $args->getObject());
         if ($args->getObject() instanceof EventableModelInterface) {
             $args->getObject()->setEventDispatcher($this->eventDispatcher);
         }
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     * @return void
-     */
-    public function postLoad(LifecycleEventArgs $args)
+    public function postLoad(PostLoadEventArgs $args): void
+    {
+        dd(__METHOD__, $args->getObject());
+        $this->setEventDispatcherToEventableModel($args);
+    }
+
+    public function prePersist(PrePersistEventArgs $args): void
     {
         $this->setEventDispatcherToEventableModel($args);
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     * @return void
-     */
-    public function prePersist(LifecycleEventArgs $args)
-    {
-        $this->setEventDispatcherToEventableModel($args);
-    }
-
-    /**
-     * @param LifecycleEventArgs $args
-     * @return void
-     */
-    public function postPersist(LifecycleEventArgs $args)
+    public function postPersist(PostPersistEventArgs $args): void
     {
         $entity = $args->getObject();
         if ($entity instanceof TargetedModelInterface) {
@@ -98,11 +78,7 @@ class ModelDoctrineSubscriber implements EventSubscriber
         }
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     * @return void
-     */
-    public function postUpdate(LifecycleEventArgs $args)
+    public function postUpdate(PostUpdateEventArgs $args): void
     {
         $entity = $args->getObject();
         if ($entity instanceof TargetedModelInterface) {
@@ -110,11 +86,7 @@ class ModelDoctrineSubscriber implements EventSubscriber
         }
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     * @return void
-     */
-    public function preRemove(LifecycleEventArgs $args)
+    public function preRemove(PreRemoveEventArgs $args): void
     {
         $entity = $args->getObject();
         if ($entity instanceof ConditionalDeletionInterface && !$entity->canBeDeleted()) {
@@ -122,9 +94,6 @@ class ModelDoctrineSubscriber implements EventSubscriber
         }
     }
 
-    /**
-     * @param PostFlushEventArgs $args
-     */
     public function postFlush(PostFlushEventArgs $args): void
     {
         if ($this->hasUpdatedEntities()) {
@@ -136,6 +105,6 @@ class ModelDoctrineSubscriber implements EventSubscriber
             }
             $this->cleanupUpdatedEntities();
         }
-        $this->makeFlushIfNeeded($args->getEntityManager());
+        $this->makeFlushIfNeeded($args->getObjectManager());
     }
 }

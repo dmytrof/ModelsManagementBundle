@@ -15,14 +15,11 @@ interface ArrayConvertibleModelInterface
 {
     /**
      * Converts data to array
-     * @return array
      */
     public function toArray(): array;
 
     /**
      * Sets data from array
-     * @param array $data
-     * @return ArrayConvertibleModelInterface
      */
     public function fromArray(array $data): self;
 }

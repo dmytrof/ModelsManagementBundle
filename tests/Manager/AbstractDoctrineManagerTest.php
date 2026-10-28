@@ -18,7 +18,7 @@ use Dmytrof\ModelsManagementBundle\Model\SimpleModelInterface;
 use Doctrine\Common\EventManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
-use Doctrine\ORM\{EntityManagerInterface, Mapping\ClassMetadata};
+use Doctrine\ORM\{EntityManagerInterface, Event\PreRemoveEventArgs, Mapping\ClassMetadata};
 use Dmytrof\ModelsManagementBundle\Tests\Data\{SomeModel, SomeModelDoctrineManager, SomeModelRepository};
 use Symfony\Component\Form\{FormFactoryBuilder, FormFactoryInterface};
 use Symfony\Component\Validator\{ConstraintViolation,
@@ -52,7 +52,7 @@ class AbstractDoctrineManagerTest extends TestCase
         });
         $entityManager->method('remove')->willReturnCallback(function (SimpleModelInterface $model) use ($entityManager, $eventDispatcher) {
             $subscriber = new ModelDoctrineSubscriber($eventDispatcher);
-            $subscriber->preRemove(new LifecycleEventArgs($model, $entityManager));
+            $subscriber->preRemove(new PreRemoveEventArgs($model, $entityManager));
         });
 
         $repo = new SomeModelRepository($entityManager, new ClassMetadata(SomeModel::class));

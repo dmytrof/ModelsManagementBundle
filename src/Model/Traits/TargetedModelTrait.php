@@ -18,22 +18,14 @@ trait TargetedModelTrait
 {
     use EventableModelTrait;
 
-    /**
-     * @var array
-     */
-    protected $target;
+    protected ?array $target = null;
 
-    /**
-     * @var Target
-     */
-    protected $targetObj;
+    protected ?Target $targetObj = null;
 
     /**
      * Sets target
-     * @param Target|SimpleModelInterface|null $target
-     * @return TargetedModelInterface
      */
-    public function setTarget($target): TargetedModelInterface
+    public function setTarget(Target|SimpleModelInterface|null $target): TargetedModelInterface
     {
         $target = ($target instanceof Target) ? $target : new Target($this->eventDispatcher, $target);
         $this->updateTargetData($target);
@@ -43,7 +35,6 @@ trait TargetedModelTrait
 
     /**
      * Refreshes target
-     * @return TargetedModelInterface
      */
     public function refreshTarget(): TargetedModelInterface
     {
@@ -59,7 +50,6 @@ trait TargetedModelTrait
 
     /**
      * Updated target data
-     * @param Target|null $target
      */
     private function updateTargetData(?Target $target): void
     {
@@ -68,7 +58,6 @@ trait TargetedModelTrait
 
     /**
      * Returns target
-     * @return Target
      */
     public function getTarget(): Target
     {
@@ -83,7 +72,6 @@ trait TargetedModelTrait
 
     /**
      * Checks target
-     * @return bool
      */
     public function hasTarget(): bool
     {
@@ -96,7 +84,7 @@ trait TargetedModelTrait
 
     public function __destruct()
     {
-        if (method_exists('parent', '__destruct')) {
+        if (($parent = get_parent_class(self::class)) && method_exists($parent, '__destruct')) {
             parent::__destruct();
         }
         $this->_destructTargetedModel();
@@ -105,7 +93,7 @@ trait TargetedModelTrait
     /**
      * Destructor actions
      */
-    protected function _destructTargetedModel()
+    protected function _destructTargetedModel(): void
     {
         $this->eventDispatcher = null;
         $this->target = null;

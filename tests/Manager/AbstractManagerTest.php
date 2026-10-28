@@ -30,10 +30,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class AbstractManagerTest extends TestCase
 {
-    /**
-     * @var AbstractManager
-     */
-    protected $manager;
+    protected ?AbstractManager $manager = null;
 
     public function setUp(): void
     {

@@ -17,19 +17,9 @@ use Throwable;
 
 class FormErrorsException extends RuntimeException implements HttpExceptionInterface
 {
-    /**
-     * @var FormInterface
-     */
-    protected $form;
+    protected FormInterface $form;
 
-    /**
-     * FormErrorsException constructor.
-     * @param FormInterface $form
-     * @param string $message
-     * @param int $code
-     * @param Throwable|null $previous
-     */
-    public function __construct(FormInterface $form, string $message = "Form data errors", int $code = 0, Throwable $previous = null)
+    public function __construct(FormInterface $form, string $message = "Form data errors", int $code = 0, ?Throwable $previous = null)
     {
         $this->form = $form;
         parent::__construct($message.': '.json_encode($this->getFormErrors()), $code, $previous);
@@ -37,7 +27,6 @@ class FormErrorsException extends RuntimeException implements HttpExceptionInter
 
     /**
      * Returns form
-     * @return FormInterface
      */
     public function getForm(): FormInterface
     {
@@ -46,7 +35,6 @@ class FormErrorsException extends RuntimeException implements HttpExceptionInter
 
     /**
      * Returns form errors as array
-     * @return array
      */
     public function getFormErrors(): array
     {

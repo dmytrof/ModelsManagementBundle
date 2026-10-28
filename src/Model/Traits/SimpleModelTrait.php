@@ -19,7 +19,6 @@ trait SimpleModelTrait
 
     /**
      * Returns id field name
-     * @return string
      */
     protected function getIdFieldName(): string
     {
@@ -29,19 +28,16 @@ trait SimpleModelTrait
     /**
      * Returns id
      * @see SimpleModelInterface::getId()
-     * @return mixed
      */
-    public function getId()
+    public function getId(): mixed
     {
         return $this->{$this->getIdFieldName()};
     }
 
     /**
      * Sets id
-     * @param mixed $id
-     * @return SimpleModelInterface
      */
-    public function setId($id): SimpleModelInterface
+    public function setId(mixed $id): SimpleModelInterface
     {
         $this->{$this->getIdFieldName()} = $id;
         return $this;
@@ -50,7 +46,6 @@ trait SimpleModelTrait
     /**
      * Checks if model is new
      * @see SimpleModelInterface::isModelNew()
-     * @return bool
      */
     public function isModelNew(): bool
     {
@@ -59,7 +54,6 @@ trait SimpleModelTrait
 
     /**
      * Returns title of the model
-     * @return string
      */
     public function getModelTitle(): string
     {

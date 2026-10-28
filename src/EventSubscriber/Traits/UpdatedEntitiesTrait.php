@@ -15,19 +15,12 @@ use Doctrine\Persistence\ObjectManager;
 
 trait UpdatedEntitiesTrait
 {
-    /**
-     * @var array
-     */
-    protected $updatedEntities = [];
+    protected array $updatedEntities = [];
 
-    /**
-     * @var bool
-     */
-    protected $needsFlush = false;
+    protected bool $needsFlush = false;
 
     /**
      * Returns updated entities
-     * @return array
      */
     protected function getUpdatedEntities(): array
     {
@@ -36,7 +29,6 @@ trait UpdatedEntitiesTrait
 
     /**
      * Checks updated entities exists
-     * @return bool
      */
     protected function hasUpdatedEntities(): bool
     {
@@ -45,13 +37,11 @@ trait UpdatedEntitiesTrait
 
     /**
      * Adds updated entity
-     * @param $entity
-     * @return $this
      */
-    protected function addUpdatedEntity($entity): self
+    protected function addUpdatedEntity(object $entity): self
     {
         if (!in_array($entity, $this->updatedEntities)) {
-            array_push($this->updatedEntities, $entity);
+            $this->updatedEntities[] = $entity;
         }
 
         return $this;
@@ -59,7 +49,6 @@ trait UpdatedEntitiesTrait
 
     /**
      * Cleans up updated entities
-     * @return $this
      */
     protected function cleanupUpdatedEntities(): self
     {
@@ -69,8 +58,6 @@ trait UpdatedEntitiesTrait
 
     /**
      * Sets need flush
-     * @param bool $needsFlush
-     * @return $this
      */
     protected function setNeedsFlush(bool $needsFlush = true): self
     {
@@ -80,8 +67,6 @@ trait UpdatedEntitiesTrait
 
     /**
      * Makes flush if needed
-     * @param ObjectManager $objectManager
-     * @return $this
      */
     protected function makeFlushIfNeeded(ObjectManager $objectManager): self
     {

@@ -15,19 +15,16 @@ interface SimpleModelInterface extends DefinedModelInterface
 {
     /**
      * Returns model id
-     * @return mixed
      */
-    public function getId();
+    public function getId(): mixed;
 
     /**
      * Checks if model is new
-     * @return bool
      */
     public function isModelNew(): bool;
 
     /**
      * Returns title of the model object
-     * @return string
      */
     public function getModelTitle(): string;
 }

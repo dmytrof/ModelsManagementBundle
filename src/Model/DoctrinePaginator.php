@@ -11,24 +11,16 @@
 
 namespace Dmytrof\ModelsManagementBundle\Model;
 
-use Dmytrof\ModelsManagementBundle\Model\PaginatorInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator as BasePaginator;
 
 class DoctrinePaginator extends BasePaginator implements PaginatorInterface
 {
-    /**
-     * @var int
-     */
-    protected $page = 1;
+    protected int $page = 1;
 
-    /**
-     * @var int
-     */
-    protected $limit = 50;
+    protected int $limit = 50;
 
     /**
      * Updates query with page limits
-     * @return DoctrinePaginator
      */
     protected function updateQueryPage(): self
     {
@@ -41,7 +33,6 @@ class DoctrinePaginator extends BasePaginator implements PaginatorInterface
 
     /**
      * Returns page
-     * @return int
      */
     public function getPage(): int
     {
@@ -50,8 +41,6 @@ class DoctrinePaginator extends BasePaginator implements PaginatorInterface
 
     /**
      * Sets page
-     * @param int $page
-     * @return DoctrinePaginator
      */
     public function setPage(int $page): self
     {
@@ -62,7 +51,6 @@ class DoctrinePaginator extends BasePaginator implements PaginatorInterface
 
     /**
      * Returns limit
-     * @return int
      */
     public function getLimit(): int
     {
@@ -71,8 +59,6 @@ class DoctrinePaginator extends BasePaginator implements PaginatorInterface
 
     /**
      * Sets limit
-     * @param int $limit
-     * @return DoctrinePaginator
      */
     public function setLimit(int $limit): self
     {
@@ -94,6 +80,6 @@ class DoctrinePaginator extends BasePaginator implements PaginatorInterface
      */
     public function getItems(): array
     {
-        return $this->getIterator()->getArrayCopy();
+        return iterator_to_array($this->getIterator(), false);
     }
 }

@@ -15,14 +15,10 @@ use Dmytrof\ModelsManagementBundle\Model\ActiveModelInterface;
 
 trait ActiveModelTrait
 {
-    /**
-     * @var boolean
-     */
-    protected $active;
+    protected bool $active = false;
 
     /**
      * Return the name of active property
-     * @return string
      */
     public static function getActiveProperty(): string
     {
@@ -31,8 +27,6 @@ trait ActiveModelTrait
 
     /**
      * Sets model active
-     * @param bool|null $active
-     * @return ActiveModelInterface
      */
     public function setActive(?bool $active = true): ActiveModelInterface
     {
@@ -42,7 +36,6 @@ trait ActiveModelTrait
 
     /**
      * Toggles model active
-     * @return ActiveModelInterface
      */
     public function toggleActive(): ActiveModelInterface
     {
@@ -52,7 +45,6 @@ trait ActiveModelTrait
 
     /**
      * Returns model active property value
-     * @return bool
      */
     public function getActive(): bool
     {
@@ -61,7 +53,6 @@ trait ActiveModelTrait
 
     /**
      * Checks if model is active
-     * @return boolean
      */
     public function isActive(): bool
     {
@@ -70,7 +61,6 @@ trait ActiveModelTrait
 
     /**
      * Activates model
-     * @return ActiveModelInterface
      */
     public function activate(): ActiveModelInterface
     {
@@ -79,7 +69,6 @@ trait ActiveModelTrait
 
     /**
      * Deactivates model
-     * @return ActiveModelInterface
      */
     public function deactivate(): ActiveModelInterface
     {

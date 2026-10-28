@@ -17,9 +17,6 @@ class OptionsFilter
 {
     /**
      * Removes undefined options from array of options according to OptionsResolver
-     * @param array $options
-     * @param OptionsResolver $resolver
-     * @return array
      */
     public function removeUndefinedOptions(array $options, OptionsResolver $resolver): array
     {

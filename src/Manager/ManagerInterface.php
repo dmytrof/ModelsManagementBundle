@@ -18,44 +18,31 @@ interface ManagerInterface
 {
     /**
      * Returns managed model's class
-     * @return string
      */
     public function getModelClass(): string;
 
     /**
      * Saves model
-     * @param SimpleModelInterface $model
-     * @param array $options
-     * @return ManagerInterface
      */
     public function save(SimpleModelInterface $model, array $options = []): self;
 
     /**
      * Removes model
-     * @param SimpleModelInterface $model
-     * @param array $options
-     * @return ManagerInterface
      */
     public function remove(SimpleModelInterface $model, array $options = []): self;
 
     /**
      * Returns model. Null if model not exists
-     * @param int|string|null $id
-     * @return SimpleModelInterface|null
      */
-    public function get($id): ?SimpleModelInterface;
+    public function get(null|int|string $id): ?SimpleModelInterface;
 
     /**
      * Returns model. Throws NotFoundException if model not exists
-     * @param int|string|null $id
-     * @return SimpleModelInterface
-     * @throws NotFoundException
      */
-    public function getItem($id): SimpleModelInterface;
+    public function getItem(null|int|string$id): SimpleModelInterface;
 
     /**
      * Creates new model and returns it
-     * @return SimpleModelInterface
      */
     public function new(): SimpleModelInterface;
 }

@@ -15,24 +15,18 @@ interface PaginatorInterface extends \IteratorAggregate
 {
     /**
      * Returns page
-     * @return int
      */
     public function getPage(): int;
 
     /**
      * Returns limit (count on page)
-     * @return int
      */
     public function getLimit(): int;
 
     /**
      * Returns total count
-     * @return int
      */
     public function getTotalCount(): int;
 
-    /**
-     * @return array
-     */
     public function getItems(): array;
 }

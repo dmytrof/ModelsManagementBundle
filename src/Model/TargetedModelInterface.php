@@ -11,32 +11,25 @@
 
 namespace Dmytrof\ModelsManagementBundle\Model;
 
-use Dmytrof\ModelsManagementBundle\{Model\Target, Model\SimpleModelInterface, Exception\InvalidTargetException};
-
 interface TargetedModelInterface extends EventableModelInterface
 {
     /**
      * Sets target
-     * @param Target|SimpleModelInterface $target
-     * @return TargetedModelInterface
      */
-    public function setTarget($target): TargetedModelInterface;
+    public function setTarget(Target|SimpleModelInterface $target): TargetedModelInterface;
 
     /**
      * Returns target
-     * @return Target
      */
     public function getTarget(): Target;
 
     /**
      * Checks target
-     * @return bool
      */
     public function hasTarget(): bool;
 
     /**
      * Refreshes target
-     * @return TargetedModelInterface
      */
     public function refreshTarget(): TargetedModelInterface;
 }

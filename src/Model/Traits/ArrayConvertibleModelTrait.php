@@ -18,7 +18,6 @@ trait ArrayConvertibleModelTrait
 {
     /**
      * @see ArrayConvertibleModelInterface::toArray()
-     * @return array
      */
     public function toArray(): array
     {
@@ -42,8 +41,6 @@ trait ArrayConvertibleModelTrait
 
     /**
      * @see ArrayConvertibleModelInterface::fromArray()
-     * @param array $data
-     * @return ArrayConvertibleModelInterface
      */
     public function fromArray(array $data): ArrayConvertibleModelInterface
     {

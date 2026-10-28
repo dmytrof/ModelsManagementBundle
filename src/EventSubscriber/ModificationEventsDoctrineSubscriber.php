@@ -14,35 +14,23 @@ namespace Dmytrof\ModelsManagementBundle\EventSubscriber;
 use Dmytrof\ModelsManagementBundle\EventSubscriber\Traits\UpdatedEntitiesTrait;
 use Dmytrof\ModelsManagementBundle\Model\ModificationEventsInterface;
 use Doctrine\ORM\Event\PostFlushEventArgs;
+use Doctrine\ORM\Event\PostPersistEventArgs;
+use Doctrine\ORM\Event\PostRemoveEventArgs;
+use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\Common\EventSubscriber;
-use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class ModificationEventsDoctrineSubscriber implements EventSubscriber
 {
     use UpdatedEntitiesTrait;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    /**
-     * ModelDoctrineSubscriber constructor.
-     * @param EventDispatcherInterface $eventDispatcher
-     */
-    public function __construct(EventDispatcherInterface $eventDispatcher)
-    {
-        $this->eventDispatcher = $eventDispatcher;
+    public function __construct(
+        private readonly EventDispatcherInterface $eventDispatcher,
+    ) {
     }
 
-    /**
-     * Get subscribed events
-     *
-     * @return array
-     */
-    public function getSubscribedEvents()
+    public function getSubscribedEvents(): array
     {
         return [
             Events::postPersist,
@@ -52,46 +40,29 @@ class ModificationEventsDoctrineSubscriber implements EventSubscriber
         ];
     }
 
-    /**
-     * @param mixed $entity
-     */
-    protected function addUpdatedEntityWithModificationEvents($entity): void
+    protected function addUpdatedEntityWithModificationEvents(object $entity): void
     {
         if ($entity instanceof ModificationEventsInterface) {
            $this->addUpdatedEntity($entity);
         }
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     * @return void
-     */
-    public function postPersist(LifecycleEventArgs $args): void
+    public function postPersist(PostPersistEventArgs $args): void
+    {
+        dd(__METHOD__);
+        $this->addUpdatedEntityWithModificationEvents($args->getObject());
+    }
+
+    public function postUpdate(PostUpdateEventArgs $args): void
     {
         $this->addUpdatedEntityWithModificationEvents($args->getObject());
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     * @return void
-     */
-    public function postUpdate(LifecycleEventArgs $args): void
+    public function postRemove(PostRemoveEventArgs $args): void
     {
         $this->addUpdatedEntityWithModificationEvents($args->getObject());
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     * @return void
-     */
-    public function postRemove(LifecycleEventArgs $args): void
-    {
-        $this->addUpdatedEntityWithModificationEvents($args->getObject());
-    }
-
-    /**
-     * @param PostFlushEventArgs $args
-     */
     public function postFlush(PostFlushEventArgs $args): void
     {
         if ($this->hasUpdatedEntities()) {
@@ -108,6 +79,6 @@ class ModificationEventsDoctrineSubscriber implements EventSubscriber
             }
             $this->cleanupUpdatedEntities();
         }
-        $this->makeFlushIfNeeded($args->getEntityManager());
+        $this->makeFlushIfNeeded($args->getObjectManager());
     }
 }

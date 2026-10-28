@@ -31,25 +31,10 @@ abstract class AbstractManager implements ManagerInterface
     const FORM_TYPE_CREATE_ITEM = null;
     const FORM_TYPE_UPDATE_ITEM = null;
 
-    /**
-     * @var ValidatorInterface
-     */
-    protected $validator;
-
-    /**
-     * @var FormFactoryInterface
-     */
-    protected $formFactory;
-
-    /**
-     * AbstractManager constructor.
-     * @param ValidatorInterface $validator
-     * @param FormFactoryInterface $formFactory
-     */
-    public function __construct(ValidatorInterface $validator, FormFactoryInterface $formFactory)
-    {
-        $this->validator = $validator;
-        $this->formFactory = $formFactory;
+    public function __construct(
+        protected ValidatorInterface $validator,
+        protected FormFactoryInterface $formFactory,
+    ) {
     }
 
     /**
@@ -67,7 +52,6 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * Returns validator
-     * @return ValidatorInterface
      */
     public function getValidator(): ValidatorInterface
     {
@@ -76,7 +60,6 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * Returns FormFactory
-     * @return FormFactoryInterface
      */
     public function getFormFactory(): FormFactoryInterface
     {
@@ -86,7 +69,7 @@ abstract class AbstractManager implements ManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function getItem($id): SimpleModelInterface
+    public function getItem(null|int|string $id): SimpleModelInterface
     {
         $entity = !is_null($id) ? $this->get($id) : null;
         if (!$entity) {
@@ -103,8 +86,6 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * Configures options for save
-     * @param OptionsResolver $resolver
-     * @return OptionsResolver
      */
     protected function configureSaveOptions(OptionsResolver $resolver): OptionsResolver
     {
@@ -118,11 +99,8 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * Saves model
-     * @param SimpleModelInterface $model
-     * @param array $options
-     * @return mixed
      */
-    protected abstract function _save(SimpleModelInterface $model, array $options = []);
+    protected abstract function _save(SimpleModelInterface $model, array $options = []): mixed;
 
     /**
      * {@inheritDoc}
@@ -144,8 +122,6 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * Configures options for remove
-     * @param OptionsResolver $resolver
-     * @return OptionsResolver
      */
     protected function configureRemoveOptions(OptionsResolver $resolver): OptionsResolver
     {
@@ -154,11 +130,8 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * Removes model
-     * @param SimpleModelInterface $model
-     * @param array $options
-     * @return mixed
      */
-    protected abstract function _remove(SimpleModelInterface $model, array $options = []);
+    protected abstract function _remove(SimpleModelInterface $model, array $options = []): mixed;
 
     /**
      * {@inheritDoc}
@@ -176,8 +149,6 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * Checks if model can be deleted
-     * @param SimpleModelInterface $model
-     * @return bool
      */
     protected function canModelBeDeleted(SimpleModelInterface $model): bool
     {
@@ -190,19 +161,14 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * Removes model by id
-     * @param $id
-     * @param array $options
-     * @return ManagerInterface
      */
-    public function removeById($id, array $options = []): ManagerInterface
+    public function removeById(null|int|string $id, array $options = []): ManagerInterface
     {
         return $this->remove($this->getItem($id), $options);
     }
 
     /**
      * Configures options for get form
-     * @param OptionsResolver $resolver
-     * @return OptionsResolver
      */
     protected function configureGetFormOptions(OptionsResolver $resolver): OptionsResolver
     {
@@ -227,8 +193,6 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * Returns Form
-     * @param array $options
-     * @return FormInterface
      */
     public function getForm(array $options = []): FormInterface
     {
@@ -239,7 +203,6 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * Returns form type class for createModel
-     * @return string
      */
     public function getCreateModelFormType(): string
     {
@@ -253,8 +216,6 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * Configures options for create from data
-     * @param OptionsResolver $resolver
-     * @return OptionsResolver
      */
     protected function configureUpdateModelDataOptions(OptionsResolver $resolver): OptionsResolver
     {
@@ -272,18 +233,12 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * Applies before form handling
-     * @param SimpleModelInterface $model
-     * @param array $options
      */
     protected function preUpdateModelData(SimpleModelInterface $model, array $options)
     {
     }
 
-    /**
-     * @param array $options
-     * @return mixed
-     */
-    public function updateModelData(array $options)
+    public function updateModelData(array $options): object
     {
         $options = $this->configureUpdateModelDataOptions(new OptionsResolver())->resolve($options);
 
@@ -306,8 +261,6 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * Configures options for update data
-     * @param OptionsResolver $resolver
-     * @return OptionsResolver
      */
     protected function configureUpdateDataOptions(OptionsResolver $resolver): OptionsResolver
     {
@@ -319,11 +272,7 @@ abstract class AbstractManager implements ManagerInterface
         return $resolver;
     }
 
-    /**
-     * @param array $options
-     * @return mixed
-     */
-    public function updateData(array $options)
+    public function updateData(array $options): object
     {
         $options = $this->configureUpdateDataOptions(new OptionsResolver())->resolve($options);
 
@@ -341,8 +290,6 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * Returns create model form
-     * @param array $options
-     * @return FormInterface
      */
     public function getCreateModelForm(array $options = []): FormInterface
     {
@@ -355,8 +302,6 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * Creates new item
-     * @param array $options
-     * @return SimpleModelInterface
      */
     public function createModel(array $options = []): SimpleModelInterface
     {
@@ -369,7 +314,6 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * Returns form type class for updateModel
-     * @return string
      */
     public function getUpdateModelFormType(): string
     {
@@ -383,8 +327,6 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * Returns create model form
-     * @param array $options
-     * @return FormInterface
      */
     public function getUpdateModelForm(array $options = []): FormInterface
     {
@@ -397,8 +339,6 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * Updates existing model
-     * @param array $options
-     * @return SimpleModelInterface
      */
     public function updateModel(array $options = []): SimpleModelInterface
     {
@@ -411,11 +351,8 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * Updates existing model by id
-     * @param int|string|null $id
-     * @param array $options
-     * @return SimpleModelInterface
      */
-    public function updateModelById($id, array $options = []): SimpleModelInterface
+    public function updateModelById(null|int|string $id, array $options = []): SimpleModelInterface
     {
         return $this->updateModel(array_merge([
             'model' => $this->getItem($id),
@@ -424,8 +361,6 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * Configures options for create from data
-     * @param OptionsResolver $resolver
-     * @return OptionsResolver
      */
     protected function configureProcessModelFormOptions(OptionsResolver $resolver): OptionsResolver
     {
@@ -466,9 +401,6 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * Processes model form (submitting)
-     * @param FormInterface $form
-     * @param array $options
-     * @return AbstractManager
      */
     public function processModelForm(FormInterface $form, array $options = []): self
     {
@@ -487,8 +419,6 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * Checks if form is submitted and valid
-     * @param FormInterface $form
-     * @return AbstractManager
      */
     public function checkModelForm(FormInterface $form): self
     {

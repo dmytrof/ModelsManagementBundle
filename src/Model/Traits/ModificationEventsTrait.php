@@ -7,14 +7,10 @@ use Dmytrof\ModelsManagementBundle\Model\ModificationEventsInterface;
 
 trait ModificationEventsTrait
 {
-    /**
-     * @var array
-     */
-    protected $modificationEvents = [];
+    protected array $modificationEvents = [];
 
     /**
      * Returns modification events
-     * @return array
      */
     public function getModificationEvents(): array
     {
@@ -23,18 +19,15 @@ trait ModificationEventsTrait
 
     /**
      * Adds modification events
-     * @param ModificationEventInterface $event
-     * @return ModificationEventsInterface
      */
     public function addModificationEvent(ModificationEventInterface $event): ModificationEventsInterface
     {
-        array_push($this->modificationEvents, $event);
+        $this->modificationEvents[] = $event;
         return $this;
     }
 
     /**
      * Clears modification events
-     * @return ModificationEventsInterface
      */
     public function cleanupModificationEvents(): ModificationEventsInterface
     {

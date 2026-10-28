@@ -17,7 +17,6 @@ interface ConditionalDeletionInterface
 {
     /**
      * Checks if model can be deleted
-     * @return bool
      * @throws NotDeletableModelException
      */
     public function canBeDeleted(): bool;

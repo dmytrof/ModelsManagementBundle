@@ -15,14 +15,11 @@ interface ModificationEventInterface
 {
     /**
      * Checks if flush needed
-     * @return bool
      */
     public function isNeedsFlush(): bool;
 
     /**
      * Sets needs flush
-     * @param bool $needsFlush
-     * @return $this
      */
     public function setNeedsFlush(bool $needsFlush): self;
 }

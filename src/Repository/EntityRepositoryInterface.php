@@ -20,42 +20,31 @@ interface EntityRepositoryInterface extends ObjectRepository
 {
     /**
      * Returns alias
-     * @param QueryBuilder|null $builder
-     * @return string
      */
     public function getAlias(?QueryBuilder $builder = null): string;
 
     /**
      * Creates new entity
-     * @return SimpleModelInterface
      */
     public function createNew(): SimpleModelInterface;
 
     /**
      * Returns query builder
-     * @param array $options
-     * @return QueryBuilder
      */
     public function getQueryBuilder(array $options = []): QueryBuilder;
 
     /**
      * Configures options for getQueryBuilder
-     * @param OptionsResolver $resolver
-     * @return OptionsResolver
      */
     public function configureGetQueryBuilderOptions(OptionsResolver $resolver): OptionsResolver;
 
     /**
      * Returns paginator
-     * @param array $options
-     * @return DoctrinePaginator
      */
     public function getPaginator(array $options = []): DoctrinePaginator;
 
     /**
      * Configures paginator options
-     * @param OptionsResolver $resolver
-     * @return OptionsResolver
      */
     public function configureGetPaginatorOptions(OptionsResolver $resolver): OptionsResolver;
 }

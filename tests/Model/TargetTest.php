@@ -112,14 +112,14 @@ class TargetTest extends TestCase
 
         $eventDispatcher
             ->method('dispatch')
-            ->will($this->returnCallback(function (LoadTargetModel $event) use ($model) {
+            ->willReturnCallback(function (LoadTargetModel $event) use ($model) {
                 $event->setModel($model);
                 return $event;
-            }));
+            });
 
         $this->assertEquals($model->getId(), $target->getId());
         $this->assertEquals($model->getId(), $target->getModelId());
         $this->assertInstanceOf(SomeModel::class, $target->getModel());
         $this->assertEquals($model, $target->getModel());
     }
-}
+}

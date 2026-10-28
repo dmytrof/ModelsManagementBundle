@@ -16,21 +16,14 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\{Form\FormFactoryInterface, Validator\Validator\ValidatorInterface};
 use Symfony\Component\OptionsResolver\{Options, OptionsResolver};
 use Dmytrof\ModelsManagementBundle\Model\{DoctrinePaginator, SimpleModelInterface};
-use Dmytrof\ModelsManagementBundle\{Repository\EntityRepositoryInterface, Utils\OptionsFilter};
+use Dmytrof\ModelsManagementBundle\{Exception\RuntimeException,
+    Repository\EntityRepositoryInterface,
+    Utils\OptionsFilter};
 
 abstract class AbstractDoctrineManager extends AbstractManager
 {
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
+    protected ManagerRegistry $registry;
 
-    /**
-     * AbstractDoctrineManager constructor.
-     * @param ManagerRegistry $registry
-     * @param ValidatorInterface $validator
-     * @param FormFactoryInterface $formFactory
-     */
     public function __construct(ManagerRegistry $registry, ValidatorInterface $validator, FormFactoryInterface $formFactory)
     {
         parent::__construct($validator, $formFactory);
@@ -39,7 +32,6 @@ abstract class AbstractDoctrineManager extends AbstractManager
 
     /**
      * Returns Registry
-     * @return ManagerRegistry
      */
     public function getRegistry(): ManagerRegistry
     {
@@ -48,7 +40,6 @@ abstract class AbstractDoctrineManager extends AbstractManager
 
     /**
      * Returns entity manager
-     * @return EntityManagerInterface
      */
     public function getManager(): EntityManagerInterface
     {
@@ -57,7 +48,6 @@ abstract class AbstractDoctrineManager extends AbstractManager
 
     /**
      * Returns repository for entity
-     * @return EntityRepositoryInterface
      */
     public function getRepository(): EntityRepositoryInterface
     {
@@ -66,8 +56,6 @@ abstract class AbstractDoctrineManager extends AbstractManager
 
     /**
      * Configures options for save
-     * @param OptionsResolver $resolver
-     * @return OptionsResolver
      */
     protected function configureSaveOptions(OptionsResolver $resolver): OptionsResolver
     {
@@ -82,9 +70,6 @@ abstract class AbstractDoctrineManager extends AbstractManager
 
     /**
      * preSave model handler
-     * @param SimpleModelInterface $entity
-     * @param array $options
-     * @return AbstractDoctrineManager
      */
     protected function preSave(SimpleModelInterface $entity, array $options = []): self
     {
@@ -119,8 +104,6 @@ abstract class AbstractDoctrineManager extends AbstractManager
 
     /**
      * Configures options for remove
-     * @param OptionsResolver $resolver
-     * @return OptionsResolver
      */
     protected function configureRemoveOptions(OptionsResolver $resolver): OptionsResolver
     {
@@ -135,8 +118,6 @@ abstract class AbstractDoctrineManager extends AbstractManager
 
     /**
      * Checks if model can be deleted
-     * @param SimpleModelInterface $model
-     * @return bool
      */
     protected function canModelBeDeleted(SimpleModelInterface $model): bool
     {
@@ -160,9 +141,14 @@ abstract class AbstractDoctrineManager extends AbstractManager
     /**
      * {@inheritDoc}
      */
-    public function get($id): ?SimpleModelInterface
+    public function get(null|int|string $id): ?SimpleModelInterface
     {
-        return $this->getRepository()->find($id);
+        $object = $this->getRepository()->find($id);
+        if ($object && !$object instanceof SimpleModelInterface) {
+            throw new RuntimeException('Model is not instance of SimpleModelInterface');
+        }
+
+        return $object;
     }
 
     /**
@@ -175,8 +161,6 @@ abstract class AbstractDoctrineManager extends AbstractManager
 
     /**
      * Disables doctrine filter
-     * @param string $name
-     * @return bool
      */
     protected function disableDoctrineFilter(string $name): bool
     {
@@ -186,8 +170,6 @@ abstract class AbstractDoctrineManager extends AbstractManager
 
     /**
      * Enables doctrine filter
-     * @param string $name
-     * @return bool
      */
     protected function enableDoctrineFilter(string $name): bool
     {
@@ -197,10 +179,8 @@ abstract class AbstractDoctrineManager extends AbstractManager
 
     /**
      * Returns entities iterator
-     * @param array $options
-     * @return \Iterator
      */
-    public function getIterator(array $options = []): \Iterator
+    public function getIterator(array $options = []): iterable
     {
         $options = $this->configureGetIteratorOptions(new OptionsResolver())->resolve($options);
 
@@ -209,13 +189,11 @@ abstract class AbstractDoctrineManager extends AbstractManager
             ->setMaxResults($options['limit'])
             ->getQuery()
         ;
-        return $query->iterate();
+        return $query->toIterable();
     }
 
     /**
      * Configures paginator options
-     * @param OptionsResolver $resolver
-     * @return OptionsResolver
      */
     public function configureGetIteratorOptions(OptionsResolver $resolver): OptionsResolver
     {
@@ -245,7 +223,6 @@ abstract class AbstractDoctrineManager extends AbstractManager
 
     /**
      * Returns class metadata
-     * @return ClassMetadata
      */
     public function getClassMetadata(): ClassMetadata
     {
@@ -254,8 +231,6 @@ abstract class AbstractDoctrineManager extends AbstractManager
 
     /**
      * Returns paginator
-     * @param array $options
-     * @return DoctrinePaginator
      */
     public function getDoctrinePaginator(array $options = []): DoctrinePaginator
     {

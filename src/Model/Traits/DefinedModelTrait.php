@@ -17,7 +17,6 @@ trait DefinedModelTrait
 {
     /**
      * Returns code of the class
-     * @return string
      */
     public static function getClassCode(): string
     {
@@ -26,7 +25,6 @@ trait DefinedModelTrait
 
     /**
      * Returns code of the model
-     * @return string
      */
     public static function getClassName(): string
     {

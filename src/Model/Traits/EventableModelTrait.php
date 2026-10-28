@@ -11,20 +11,16 @@
 
 namespace Dmytrof\ModelsManagementBundle\Model\Traits;
 
+use Dmytrof\ModelsManagementBundle\Exception\RuntimeException;
 use Dmytrof\ModelsManagementBundle\Model\EventableModelInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 trait EventableModelTrait
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
+    protected ?EventDispatcherInterface $eventDispatcher = null;
 
     /**
      * Sets event dispatcher
-     * @param EventDispatcherInterface $eventDispatcher
-     * @return EventableModelInterface
      */
     public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): EventableModelInterface
     {
@@ -34,10 +30,12 @@ trait EventableModelTrait
 
     /**
      * Returns event dispatcher
-     * @return EventDispatcherInterface
      */
     public function getEventDispatcher(): EventDispatcherInterface
     {
+        if (!$this->eventDispatcher instanceof EventDispatcherInterface) {
+            throw new RuntimeException('Event dispatcher is not set');
+        }
         return $this->eventDispatcher;
     }
 }

@@ -12,9 +12,8 @@
 namespace Dmytrof\ModelsManagementBundle\Model\Traits;
 
 use Gedmo\Timestampable\Traits\TimestampableEntity;
-use Gedmo\Mapping\Annotation as Gedmo;
 
 trait TimestampableEntityTrait
 {
     use TimestampableEntity, TimestampableClone;
-}
+}

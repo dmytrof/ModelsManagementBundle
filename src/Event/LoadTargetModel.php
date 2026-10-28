@@ -16,28 +16,15 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class LoadTargetModel extends Event
 {
-    /**
-     * @var Target
-     */
-    protected $target;
+    protected ?SimpleModelInterface $model = null;
 
-    /**
-     * @var SimpleModelInterface
-     */
-    protected $model;
-
-    /**
-     * LoadTargetModel constructor.
-     * @param Target $target
-     */
-    public function __construct(Target $target)
-    {
-        $this->target = $target;
+    public function __construct(
+        protected Target $target,
+    ) {
     }
 
     /**
      * Returns target
-     * @return Target
      */
     public function getTarget(): Target
     {
@@ -46,7 +33,6 @@ class LoadTargetModel extends Event
 
     /**
      * Returns model
-     * @return SimpleModelInterface|null
      */
     public function getModel(): ?SimpleModelInterface
     {
@@ -55,8 +41,6 @@ class LoadTargetModel extends Event
 
     /**
      * Sets model
-     * @param SimpleModelInterface|null $model
-     * @return $this
      */
     public function setModel(?SimpleModelInterface $model): self
     {

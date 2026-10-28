@@ -1,0 +1,35 @@
+framework:
+    secret: test
+    test: true
+    http_method_override: false
+    handle_all_throwables: true
+    php_errors: { log: true }
+    form: { enabled: true, csrf_protection: false }
+    validation: { enabled: true }
+
+doctrine:
+    dbal:
+        driver: pdo_sqlite
+        memory: true
+    orm:
+        report_fields_where_declared: true
+        enable_lazy_ghost_objects: true
+        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+        mappings:
+            App:
+                is_bundle: false
+                type: attribute
+                dir: '%kernel.project_dir%/Entity'
+                prefix: 'Dmytrof\ModelsManagementBundle\Tests\Functional\App\Entity'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    Dmytrof\ModelsManagementBundle\Tests\Functional\App\:
+        resource: '../'
+        exclude: '../{Entity,Event,config,TestKernel.php}'
+
+    Dmytrof\ModelsManagementBundle\Tests\Functional\App\Manager\ArticleManager: { public: true }
+    Dmytrof\ModelsManagementBundle\Tests\Functional\App\Manager\CommentManager: { public: true }

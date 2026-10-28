@@ -23,7 +23,7 @@ class SomeModelManager extends AbstractManager
     /**
      * @inheritDoc
      */
-    protected function _save(SimpleModelInterface $model, array $options = [])
+    protected function _save(SimpleModelInterface $model, array $options = []): mixed
     {
         return true;
     }
@@ -31,7 +31,7 @@ class SomeModelManager extends AbstractManager
     /**
      * @inheritDoc
      */
-    protected function _remove(SimpleModelInterface $model, array $options = [])
+    protected function _remove(SimpleModelInterface $model, array $options = []): mixed
     {
         return true;
     }

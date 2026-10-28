@@ -13,16 +13,15 @@ namespace Dmytrof\ModelsManagementBundle\Repository\Traits;
 
 use Dmytrof\ModelsManagementBundle\Model\{DoctrinePaginator, SimpleModelInterface};
 use Dmytrof\ModelsManagementBundle\{Repository\EntityRepositoryInterface, Utils\OptionsFilter};
-use Doctrine\ORM\{Event\LifecycleEventArgs, Events, QueryBuilder};
+use Doctrine\ORM\{Event\PostLoadEventArgs, Events, QueryBuilder};
 use Symfony\Component\OptionsResolver\{OptionsResolver, Options};
 
 trait EntityRepositoryTrait
 {
     /**
      * Alias for entity in query
-     * @var string
      */
-    protected $alias;
+    protected ?string $alias = null;
 
     /**
      * Generates random key
@@ -44,8 +43,6 @@ trait EntityRepositoryTrait
     /**
      * Returns root alias
      * @see EntityRepositoryInterface::getAlias()
-     * @param QueryBuilder|null $builder
-     * @return string
      */
     public function getAlias(?QueryBuilder $builder = null): string
     {
@@ -62,22 +59,19 @@ trait EntityRepositoryTrait
     /**
      * Creates new entity
      * @see EntityRepositoryInterface::createNew()
-     * @return SimpleModelInterface
      */
     public function createNew(): SimpleModelInterface
     {
         $className = $this->getClassName();
         $object = new $className(...func_get_args());
 
-        $this->getEntityManager()->getEventManager()->dispatchEvent(Events::postLoad, new LifecycleEventArgs($object, $this->getEntityManager()));
+        $this->getEntityManager()->getEventManager()->dispatchEvent(Events::postLoad, new PostLoadEventArgs($object, $this->getEntityManager()));
 
         return $object;
     }
 
     /**
      * Applies filter to query builder
-     * @param QueryBuilder $builder
-     * @param array $filters
      */
     public function applyFilter(QueryBuilder $builder, array $filters = []): void
     {
@@ -86,8 +80,6 @@ trait EntityRepositoryTrait
 
     /**
      * Applies sorting to query builder
-     * @param QueryBuilder $builder
-     * @param array $sorting
      */
     public function applySorting(QueryBuilder $builder, array $sorting = []): void
     {
@@ -97,8 +89,6 @@ trait EntityRepositoryTrait
     /**
      * Configures options for getQueryBuilder
      * @see EntityRepositoryInterface::configureGetQueryBuilderOptions()
-     * @param OptionsResolver $resolver
-     * @return OptionsResolver
      */
     public function configureGetQueryBuilderOptions(OptionsResolver $resolver): OptionsResolver
     {
@@ -119,8 +109,6 @@ trait EntityRepositoryTrait
     /**
      * Returns query builder
      * @see EntityRepositoryInterface::getQueryBuilder()
-     * @param array $options
-     * @return QueryBuilder
      */
     public function getQueryBuilder(array $options = []): QueryBuilder
     {
@@ -138,8 +126,6 @@ trait EntityRepositoryTrait
     /**
      * Configures paginator options
      * @see EntityRepositoryInterface::configureGetPaginatorOptions()
-     * @param OptionsResolver $resolver
-     * @return OptionsResolver
      */
     public function configureGetPaginatorOptions(OptionsResolver $resolver): OptionsResolver
     {
@@ -174,8 +160,6 @@ trait EntityRepositoryTrait
     /**
      * Returns paginator
      * @see EntityRepositoryInterface::getPaginator()
-     * @param array $options
-     * @return DoctrinePaginator
      */
     public function getPaginator(array $options = []): DoctrinePaginator
     {

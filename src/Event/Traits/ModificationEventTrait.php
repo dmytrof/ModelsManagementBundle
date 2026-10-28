@@ -15,10 +15,7 @@ use Dmytrof\ModelsManagementBundle\Event\ModificationEventInterface;
 
 trait ModificationEventTrait
 {
-    /**
-     * @var bool
-     */
-    protected $needsFlush = false;
+    protected bool $needsFlush = false;
 
     /**
      * Checks if flush needed

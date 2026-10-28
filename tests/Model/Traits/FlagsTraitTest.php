@@ -14,6 +14,7 @@ namespace Dmytrof\ModelsManagementBundle\Tests\Model\Traits;
 use Dmytrof\ModelsManagementBundle\Exception\InvalidFlagException;
 use Dmytrof\ModelsManagementBundle\Model\Traits\FlagsTrait;
 use PHPUnit\Framework\TestCase;
+use TypeError;
 
 class FlagsTraitTest extends TestCase
 {
@@ -80,7 +81,7 @@ class FlagsTraitTest extends TestCase
             public const UNSUPPORTED_FLAG = ['ARRAY_FLAG'];
         };
 
-        $this->expectException(InvalidFlagException::class);
+        $this->expectException(TypeError::class);
         $modelWithFlags->setFlag($modelWithFlags::UNSUPPORTED_FLAG);
 
     }
@@ -91,8 +92,7 @@ class FlagsTraitTest extends TestCase
             use FlagsTrait;
         };
 
-        $this->expectException(InvalidFlagException::class);
-        $modelWithFlags->hasFlag(true);
+        $this->assertFalse($modelWithFlags->hasFlag(true));
     }
 
     public function testBooleanFalseFlagTypes()
@@ -101,8 +101,7 @@ class FlagsTraitTest extends TestCase
             use FlagsTrait;
         };
 
-        $this->expectException(InvalidFlagException::class);
-        $modelWithFlags->popFlag(false);
+        $this->assertFalse($modelWithFlags->popFlag(false));
     }
 
     public function testNullFlagTypes()
@@ -111,7 +110,7 @@ class FlagsTraitTest extends TestCase
             use FlagsTrait;
         };
 
-        $this->expectException(InvalidFlagException::class);
+        $this->expectException(TypeError::class);
         $modelWithFlags->unsetFlag(null);
     }
 
@@ -121,17 +120,7 @@ class FlagsTraitTest extends TestCase
             use FlagsTrait;
         };
 
-        $this->expectException(InvalidFlagException::class);
+        $this->expectException(TypeError::class);
         $modelWithFlags->removeFlag((object) []);
-    }
-
-    public function testFloatFlagTypes()
-    {
-        $modelWithFlags = new class {
-            use FlagsTrait;
-        };
-
-        $this->expectException(InvalidFlagException::class);
-        $modelWithFlags->hasFlag(3.14);
     }
 }

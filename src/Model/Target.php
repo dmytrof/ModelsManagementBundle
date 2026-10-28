@@ -17,26 +17,21 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class Target
 {
-    protected EventDispatcherInterface $eventDispatcher;
-
     #[Assert\NotNull]
     protected ?string $className = null;
 
     #[Assert\NotNull]
     protected mixed $id = null;
 
-    protected ?SimpleModelInterface $model = null;
-
-    public function __construct(EventDispatcherInterface $eventDispatcher, ?SimpleModelInterface $model = null)
-    {
-        $this->setEventDispatcher($eventDispatcher);
-        $this->model = $model;
+    public function __construct(
+        protected EventDispatcherInterface $eventDispatcher,
+        protected ?SimpleModelInterface $model = null,
+    ) {
         $this->refresh();
     }
 
     /**
      * Returns event dispatcher
-     * @return EventDispatcherInterface
      */
     public function getEventDispatcher(): EventDispatcherInterface
     {
@@ -44,19 +39,7 @@ class Target
     }
 
     /**
-     * Sets event dispatcher
-     * @param EventDispatcherInterface $eventDispatcher
-     * @return $this
-     */
-    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): self
-    {
-        $this->eventDispatcher = $eventDispatcher;
-        return $this;
-    }
-
-    /**
      * Returns class name of target
-     * @return string
      */
     public function getClassName(): ?string
     {
@@ -65,8 +48,6 @@ class Target
 
     /**
      * Sets class name
-     * @param null|string $className
-     * @return Target
      */
     protected function setClassName(?string $className): self
     {
@@ -80,7 +61,6 @@ class Target
 
     /**
      * Returns id of target
-     * @return mixed
      */
     public function getId(): mixed
     {
@@ -89,8 +69,6 @@ class Target
 
     /**
      * Sets id
-     * @param mixed $id
-     * @return Target
      */
     protected function setId(mixed $id): self
     {
@@ -104,8 +82,6 @@ class Target
 
     /**
      * Sets class name
-     * @param SimpleModelInterface|null $model
-     * @return Target
      */
     protected function setClassNameFromModel(?SimpleModelInterface $model): self
     {
@@ -115,8 +91,6 @@ class Target
 
     /**
      * Sets id
-     * @param SimpleModelInterface|null $model
-     * @return Target
      */
     protected function setIdFromModel(?SimpleModelInterface $model): self
     {
@@ -126,7 +100,6 @@ class Target
 
     /**
      * Refreshes Target data
-     * @return Target
      */
     public function refresh(): self
     {
@@ -137,8 +110,6 @@ class Target
 
     /**
      * Returns model of target
-     * @param bool $throwExceptionOnNull
-     * @return SimpleModelInterface|null
      */
     public function getModel(bool $throwExceptionOnNull = false): ?SimpleModelInterface
     {
@@ -155,7 +126,6 @@ class Target
 
     /**
      * Returns model id
-     * @return mixed
      */
     public function getModelId(): mixed
     {
@@ -166,9 +136,6 @@ class Target
         }
     }
 
-    /**
-     * @return array
-     */
     public function toArray(): array
     {
         return [
@@ -179,8 +146,6 @@ class Target
 
     /**
      * Sets data from array
-     * @param array $data
-     * @return Target
      */
     public function fromArray(array $data): self
     {

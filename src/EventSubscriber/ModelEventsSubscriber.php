@@ -12,30 +12,20 @@
 namespace Dmytrof\ModelsManagementBundle\EventSubscriber;
 
 use Dmytrof\ModelsManagementBundle\Event\LoadTargetModel;
-use Dmytrof\ModelsManagementBundle\Repository\EntityRepositoryInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class ModelEventsSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
-     * ModelEventsSubscriber constructor.
-     * @param ManagerRegistry $registry
-     */
-    public function __construct(ManagerRegistry $registry)
-    {
-        $this->registry = $registry;
+    public function __construct(
+        private readonly ManagerRegistry $registry,
+    ) {
     }
 
     /**
      * @inheritDoc
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             LoadTargetModel::class => 'loadTargetModel',
@@ -44,7 +34,6 @@ class ModelEventsSubscriber implements EventSubscriberInterface
 
     /**
      * Loads target model
-     * @param LoadTargetModel $event
      */
     public function loadTargetModel(LoadTargetModel $event): void
     {

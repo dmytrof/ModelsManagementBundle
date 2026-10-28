@@ -11,37 +11,16 @@
 
 namespace Dmytrof\ModelsManagementBundle\Model;
 
-use Dmytrof\ModelsManagementBundle\Model\PaginatorInterface;
-
 class Paginator implements PaginatorInterface
 {
-    /**
-     * @var array
-     */
-    protected $items;
+    protected array $items;
 
-    /**
-     * @var int
-     */
-    protected $page;
+    protected int $page;
 
-    /**
-     * @var int
-     */
-    protected $limit;
+    protected int $limit;
 
-    /**
-     * @var int
-     */
-    protected $totalCount;
+    protected int $totalCount;
 
-    /**
-     * Paginator constructor.
-     * @param iterable $items
-     * @param int|null $page
-     * @param int|null $limit
-     * @param int|null $totalCount
-     */
     public function __construct(iterable $items, ?int $page = null, ?int $limit = null, ?int $totalCount = null)
     {
         $this->items = [];
@@ -52,33 +31,21 @@ class Paginator implements PaginatorInterface
         $this->totalCount = $totalCount ?: $itemsCount;
     }
 
-    /**
-     * @return array
-     */
     public function getItems(): array
     {
         return $this->items;
     }
 
-    /**
-     * @return int
-     */
     public function getPage(): int
     {
         return $this->page;
     }
 
-    /**
-     * @return int
-     */
     public function getLimit(): int
     {
         return $this->limit;
     }
 
-    /**
-     * @return int
-     */
     public function getTotalCount(): int
     {
         return $this->totalCount;

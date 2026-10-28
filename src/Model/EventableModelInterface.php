@@ -17,14 +17,11 @@ interface EventableModelInterface
 {
     /**
      * Sets event dispatcher
-     * @param EventDispatcherInterface $eventDispatcher
-     * @return TargetedModelInterface
      */
     public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): EventableModelInterface;
 
     /**
      * Returns event dispatcher
-     * @return EventDispatcherInterface
      */
     public function getEventDispatcher(): EventDispatcherInterface;
 }

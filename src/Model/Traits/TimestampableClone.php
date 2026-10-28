@@ -15,7 +15,8 @@ trait TimestampableClone
 {
     public function __clone()
     {
-        if (is_callable(['parent', '__clone'])) {
+        // "parent" in callables is deprecated since PHP 8.2
+        if (($parent = get_parent_class(self::class)) && method_exists($parent, '__clone')) {
             parent::__clone();
         }
         $this->_cloneTimestampable();
@@ -29,4 +30,4 @@ trait TimestampableClone
         $this->createdAt = null;
         $this->updatedAt = null;
     }
-}
+}

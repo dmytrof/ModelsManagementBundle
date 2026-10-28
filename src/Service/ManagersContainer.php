@@ -13,17 +13,14 @@ namespace Dmytrof\ModelsManagementBundle\Service;
 
 use Dmytrof\ModelsManagementBundle\{Exception\ManagerException, Manager\ManagerInterface};
 use Doctrine\Common\Collections\{Collection, ArrayCollection};
+use Traversable;
 
 class ManagersContainer implements \IteratorAggregate
 {
-    /**
-     * @var Collection|ManagerInterface[]
-     */
-    protected $managers;
+    protected Collection $managers;
 
     /**
      * ManagersContainer constructor.
-     * @param iterable $managers
      */
     public function __construct(iterable $managers)
     {
@@ -36,15 +33,13 @@ class ManagersContainer implements \IteratorAggregate
     /**
      * {@inheritdoc}
      */
-    public function getIterator():\Traversable
+    public function getIterator(): Traversable
     {
         return $this->managers->getIterator();
     }
 
     /**
      * Adds manager
-     * @param ManagerInterface $manager
-     * @return ManagersContainer
      */
     public function addManager(ManagerInterface $manager): self
     {
@@ -54,8 +49,6 @@ class ManagersContainer implements \IteratorAggregate
 
     /**
      * Returns manager by model class
-     * @param null|string $modelClass
-     * @return ManagerInterface
      */
     public function getManagerForModelClass(?string $modelClass): ManagerInterface
     {
@@ -67,8 +60,6 @@ class ManagersContainer implements \IteratorAggregate
 
     /**
      * Checks if container has manager for model class
-     * @param null|string $modelClass
-     * @return bool
      */
     public function has(?string $modelClass): bool
     {
@@ -77,7 +68,6 @@ class ManagersContainer implements \IteratorAggregate
 
     /**
      * Returns supported models
-     * @return array
      */
     public function getModelClasses(): array
     {
