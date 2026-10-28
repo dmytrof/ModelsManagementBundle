@@ -17,35 +17,16 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class Target
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
+    protected EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * @var string
-     *
-     * @Assert\NotNull()
-     */
-    protected $className;
+    #[Assert\NotNull]
+    protected ?string $className = null;
 
-    /**
-     * @var int
-     *
-     * @Assert\NotNull()
-     */
-    protected $id;
+    #[Assert\NotNull]
+    protected mixed $id = null;
 
-    /**
-     * @var SimpleModelInterface
-     */
-    protected $model;
+    protected ?SimpleModelInterface $model = null;
 
-    /**
-     * Target constructor.
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param SimpleModelInterface|null $model
-     */
     public function __construct(EventDispatcherInterface $eventDispatcher, ?SimpleModelInterface $model = null)
     {
         $this->setEventDispatcher($eventDispatcher);
@@ -101,7 +82,7 @@ class Target
      * Returns id of target
      * @return mixed
      */
-    public function getId()
+    public function getId(): mixed
     {
         return $this->id;
     }
@@ -111,7 +92,7 @@ class Target
      * @param mixed $id
      * @return Target
      */
-    protected function setId($id): self
+    protected function setId(mixed $id): self
     {
         if (!is_null($this->getId()) && $this->getId() !== $id) {
             throw new TargetException(sprintf('ID of the target is already defined to %s', $this->getId()));
@@ -176,7 +157,7 @@ class Target
      * Returns model id
      * @return mixed
      */
-    public function getModelId()
+    public function getModelId(): mixed
     {
         try {
             return $this->getModel(true)->getId();

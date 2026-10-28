@@ -23,14 +23,18 @@ services:
         arguments:
             $managers: !tagged 'dmytrof.model.manager'
 
+    # Reads Gedmo mapping from PHP attributes (doctrine/annotations is not required)
+    dmytrof_models_management.gedmo.attribute_reader:
+        class: Gedmo\Mapping\Driver\AttributeReader
+
     Gedmo\Timestampable\TimestampableListener:
         tags:
             - { name: doctrine.event_subscriber }
         calls:
-            - [ setAnnotationReader, [ "@annotation_reader" ] ]
+            - [ setAnnotationReader, [ "@dmytrof_models_management.gedmo.attribute_reader" ] ]
 
     Gedmo\Blameable\BlameableListener:
         tags:
             - { name: doctrine.event_subscriber }
         calls:
-            - [ setAnnotationReader, [ "@annotation_reader" ] ]
+            - [ setAnnotationReader, [ "@dmytrof_models_management.gedmo.attribute_reader" ] ]
