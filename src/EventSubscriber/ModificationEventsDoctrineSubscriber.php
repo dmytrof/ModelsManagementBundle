@@ -13,31 +13,25 @@ namespace Dmytrof\ModelsManagementBundle\EventSubscriber;
 
 use Dmytrof\ModelsManagementBundle\EventSubscriber\Traits\UpdatedEntitiesTrait;
 use Dmytrof\ModelsManagementBundle\Model\ModificationEventsInterface;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PostRemoveEventArgs;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Events;
-use Doctrine\Common\EventSubscriber;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-class ModificationEventsDoctrineSubscriber implements EventSubscriber
+#[AsDoctrineListener(event: Events::postPersist)]
+#[AsDoctrineListener(event: Events::postUpdate)]
+#[AsDoctrineListener(event: Events::postRemove)]
+#[AsDoctrineListener(event: Events::postFlush)]
+class ModificationEventsDoctrineSubscriber
 {
     use UpdatedEntitiesTrait;
 
     public function __construct(
         private readonly EventDispatcherInterface $eventDispatcher,
     ) {
-    }
-
-    public function getSubscribedEvents(): array
-    {
-        return [
-            Events::postPersist,
-            Events::postUpdate,
-            Events::postRemove,
-            Events::postFlush,
-        ];
     }
 
     protected function addUpdatedEntityWithModificationEvents(object $entity): void
@@ -49,7 +43,6 @@ class ModificationEventsDoctrineSubscriber implements EventSubscriber
 
     public function postPersist(PostPersistEventArgs $args): void
     {
-        dd(__METHOD__);
         $this->addUpdatedEntityWithModificationEvents($args->getObject());
     }
 

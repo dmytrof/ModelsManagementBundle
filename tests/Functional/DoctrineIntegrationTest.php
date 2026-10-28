@@ -66,14 +66,11 @@ class DoctrineIntegrationTest extends KernelTestCase
     {
         /** @var Article $article */
         $article = $this->articles->new();
-        $this->assertFalse($article->hasEventDispatcher());
-        $article->setEventDispatcher(static::getContainer()->get(EventDispatcherInterface::class));
         $this->assertTrue($article->hasEventDispatcher());
 
 
         $id = $this->createArticle('First')->getId();
         $this->em->clear();
-        dd($this->articles->getItem($id));
         $this->assertTrue($this->articles->getItem($id)->hasEventDispatcher(), 'postLoad listener injects the dispatcher');
     }
 
@@ -145,10 +142,7 @@ class DoctrineIntegrationTest extends KernelTestCase
     public function testTargetIsRefreshedAfterFlushAndLoadedLazily(): void
     {
         $article = $this->articles->new()->setTitle('Commented');
-        /** @var Comment $comment */
-        $comment = $this->comments->new();
-        $comment->setEventDispatcher(static::getContainer()->get(EventDispatcherInterface::class));
-        $comment->setText('Nice!')->setTarget($article);
+        $comment = $this->comments->new()->setText('Nice!')->setTarget($article);
 
         // Both are new: the target id becomes known only after flush
         $this->em->persist($article);

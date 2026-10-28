@@ -16,6 +16,7 @@ use Dmytrof\ModelsManagementBundle\Exception\NotDeletableModelException;
 use Dmytrof\ModelsManagementBundle\Model\{ConditionalDeletionInterface,
     EventableModelInterface,
     TargetedModelInterface};
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\PostLoadEventArgs;
 use Doctrine\ORM\Event\PostPersistEventArgs;
@@ -23,11 +24,16 @@ use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Event\PrePersistEventArgs;
 use Doctrine\ORM\Event\PreRemoveEventArgs;
 use Doctrine\ORM\Events;
-use Doctrine\Common\EventSubscriber;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-class ModelDoctrineSubscriber implements EventSubscriber
+#[AsDoctrineListener(event: Events::postLoad)]
+#[AsDoctrineListener(event: Events::prePersist)]
+#[AsDoctrineListener(event: Events::postPersist)]
+#[AsDoctrineListener(event: Events::postUpdate)]
+#[AsDoctrineListener(event: Events::preRemove)]
+#[AsDoctrineListener(event: Events::postFlush)]
+class ModelDoctrineSubscriber
 {
     use UpdatedEntitiesTrait;
 
@@ -36,24 +42,11 @@ class ModelDoctrineSubscriber implements EventSubscriber
     ) {
     }
 
-    public function getSubscribedEvents(): array
-    {
-        return [
-            Events::postLoad,
-            Events::prePersist,
-            Events::postPersist,
-            Events::postUpdate,
-            Events::preRemove,
-            Events::postFlush,
-        ];
-    }
-
     /**
      * Sets registry to target
      */
     protected function setEventDispatcherToEventableModel(LifecycleEventArgs $args): void
     {
-        dump(__METHOD__, $args->getObject());
         if ($args->getObject() instanceof EventableModelInterface) {
             $args->getObject()->setEventDispatcher($this->eventDispatcher);
         }
@@ -61,7 +54,6 @@ class ModelDoctrineSubscriber implements EventSubscriber
 
     public function postLoad(PostLoadEventArgs $args): void
     {
-        dd(__METHOD__, $args->getObject());
         $this->setEventDispatcherToEventableModel($args);
     }
 
