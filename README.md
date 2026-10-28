@@ -33,3 +33,15 @@ This bundle helps you to manage your models and entities (from DB, 3rd-party API
   `ModificationEventsDoctrineSubscriber` no longer implement `Doctrine\Common\EventSubscriber`.
 * `AbstractDoctrineManager::getIterator()` uses `Query::toIterable()` and yields entities directly
   (ORM 2 `Query::iterate()` yielded `[0 => $entity]` rows).
+
+## PHP 8.4+
+
+Doctrine ORM 3 needs lazy proxies. On PHP 8.4+ enable PHP native lazy objects in your application
+(`symfony/var-exporter` 8, which a fresh install on PHP 8.4 can pull in, no longer provides Symfony LazyGhost):
+
+    # config/packages/doctrine.yaml
+    doctrine:
+        orm:
+            enable_native_lazy_objects: true   # PHP 8.4+
+
+On PHP 8.3 use `enable_lazy_ghost_objects: true` instead.

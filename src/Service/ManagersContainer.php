@@ -13,16 +13,19 @@ namespace Dmytrof\ModelsManagementBundle\Service;
 
 use Dmytrof\ModelsManagementBundle\{Exception\ManagerException, Manager\ManagerInterface};
 use Doctrine\Common\Collections\{Collection, ArrayCollection};
+use Symfony\Component\DependencyInjection\Attribute\{Autoconfigure, AutowireIterator};
 use Traversable;
 
+// Public: applications may fetch it from the container directly
+#[Autoconfigure(public: true)]
 class ManagersContainer implements \IteratorAggregate
 {
     protected Collection $managers;
 
-    /**
-     * ManagersContainer constructor.
-     */
-    public function __construct(iterable $managers)
+    public function __construct(
+        #[AutowireIterator('dmytrof.model.manager')]
+        iterable $managers,
+    )
     {
         $this->managers = new ArrayCollection();
         foreach ($managers as $manager) {
@@ -63,7 +66,7 @@ class ManagersContainer implements \IteratorAggregate
      */
     public function has(?string $modelClass): bool
     {
-        return $this->managers->containsKey($modelClass);
+        return $modelClass !== null && $this->managers->containsKey($modelClass);
     }
 
     /**
@@ -73,4 +76,4 @@ class ManagersContainer implements \IteratorAggregate
     {
         return $this->managers->getKeys();
     }
-}
+}

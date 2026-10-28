@@ -7,7 +7,9 @@ use Dmytrof\ModelsManagementBundle\Model\DoctrinePaginator;
 use Dmytrof\ModelsManagementBundle\Tests\Functional\App\Entity\{Article, Comment};
 use Dmytrof\ModelsManagementBundle\Tests\Functional\App\Event\ArticlePublished;
 use Dmytrof\ModelsManagementBundle\Tests\Functional\App\Manager\{ArticleManager, CommentManager};
+use Dmytrof\ModelsManagementBundle\EventSubscriber\{ModelDoctrineSubscriber, ModificationEventsDoctrineSubscriber};
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Events;
 use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -39,6 +41,32 @@ class DoctrineIntegrationTest extends KernelTestCase
         $this->articles->save($article);
 
         return $article;
+    }
+
+    /**
+     * @return string[] classes of the Doctrine listeners registered for the event
+     */
+    private function listenerClasses(string $event): array
+    {
+        $eventManager = $this->em->getEventManager();
+        // getListeners() of Symfony's ContainerAwareEventManager fails for events without listeners
+        if (!$eventManager->hasListeners($event)) {
+            return [];
+        }
+
+        return array_map(get_class(...), array_values($eventManager->getListeners($event)));
+    }
+
+    public function testModelDoctrineSubscriberIsRegisteredAsDoctrineListener(): void
+    {
+        foreach ([Events::postLoad, Events::prePersist, Events::postPersist, Events::postUpdate, Events::preRemove, Events::postFlush] as $event) {
+            $listeners = $this->listenerClasses($event);
+            $this->assertSame(1, count(array_keys($listeners, ModelDoctrineSubscriber::class)), "ModelDoctrineSubscriber is registered once for $event");
+        }
+        foreach ([Events::postPersist, Events::postUpdate, Events::postRemove, Events::postFlush] as $event) {
+            $listeners = $this->listenerClasses($event);
+            $this->assertSame(1, count(array_keys($listeners, ModificationEventsDoctrineSubscriber::class)), "ModificationEventsDoctrineSubscriber is registered once for $event");
+        }
     }
 
     public function testTimestampsAreSetByGedmoFromAttributes(): void

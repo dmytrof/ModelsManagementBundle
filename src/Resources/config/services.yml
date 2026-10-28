@@ -6,22 +6,10 @@ services:
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
+    # Doctrine listeners in EventSubscriber/ are registered by their #[AsDoctrineListener] attributes (autoconfigure)
     Dmytrof\ModelsManagementBundle\:
         resource: '../../*'
         exclude: '../../{DependencyInjection,Entity,Event,Exception,Model,Resources}'
-
-    Dmytrof\ModelsManagementBundle\EventSubscriber\ModelDoctrineSubscriber:
-        tags:
-            - { name: doctrine.event_subscriber }
-
-    Dmytrof\ModelsManagementBundle\EventSubscriber\ModificationEventsDoctrineSubscriber:
-        tags:
-            - { name: doctrine.event_subscriber }
-
-    Dmytrof\ModelsManagementBundle\Service\ManagersContainer:
-        public: true
-        arguments:
-            $managers: !tagged 'dmytrof.model.manager'
 
     # Reads Gedmo mapping from PHP attributes (doctrine/annotations is not required)
     dmytrof_models_management.gedmo.attribute_reader:

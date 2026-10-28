@@ -41,5 +41,13 @@ class TestKernel extends Kernel
     protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader): void
     {
         $loader->load(__DIR__.'/config/config.yaml');
+
+        // ORM 3 needs lazy proxies: native lazy objects on PHP 8.4+, otherwise Symfony LazyGhost
+        // (symfony/var-exporter < 8; version 8 removed LazyGhost and requires PHP 8.4 anyway)
+        $container->loadFromExtension('doctrine', [
+            'orm' => \PHP_VERSION_ID >= 80400
+                ? ['enable_native_lazy_objects' => true]
+                : ['enable_lazy_ghost_objects' => true],
+        ]);
     }
 }
